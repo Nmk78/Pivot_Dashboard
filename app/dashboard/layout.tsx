@@ -24,7 +24,7 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div id="dash_loading" className="flex flex-auto min-h-screen min-w-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -35,7 +35,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div id="dash_layout" className="flex flex-auto h-screen bg-background">
       <Sidebar />
       <div className="flex-1 overflow-hidden container">{children}</div>
     </div>

@@ -30,8 +30,11 @@ export default function LoginPage() {
 
     try {
       const result = await login(formData)
-      if (result.success) {
+      // console.log(result); // Debugging line
+      if (result.success && result.role === "admin") {
         router.push("/dashboard")
+      }else if(result.success && result.role === "user"){
+        router.push("/chat")
       } else {
         setError(result.error || "Login failed")
       }
@@ -50,7 +53,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen min-w-full flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
