@@ -9,10 +9,8 @@ export default function ChatLayout({
 }) {
   return (
     <div className="flex flex-auto min-h-screen">
-      <Suspense fallback={<div className="w-64 bg-background border-r" />}>
-        <UserSidebar />
-      </Suspense>
-      <main className="flex-1 overflow-hidden">{children}</main>
+      <UserSidebar />
+      <main className="flex-1 overflow-hidden ">{children}</main>
     </div>
   );
 }

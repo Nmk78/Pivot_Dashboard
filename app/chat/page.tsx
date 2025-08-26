@@ -3,8 +3,9 @@ import { ChatPageContent } from "@/components/chat-page-content"
 
 export default function ChatPage() {
   return (
-    <SearchParamsWrapper>
-      <ChatPageContent />
-    </SearchParamsWrapper>
+    <div className="h-full fixed">
+      {/* <UserSidebar /> */}
+      <ChatInterface sessionId={currentSession} />
+    </div>
   )
 }
