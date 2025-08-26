@@ -58,11 +58,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await loginUser(credentials)
       if (response.data && response.data.access_token) {
         setAuthToken(response.data.access_token)
-        if(response.data.user.role !== "admin"){
-          return { success: false, error: response.error || "You are not authorized to login as admin" }
-        }
+        // if(response.data.user){
+        //   return { success: false, error: response.error || "You are not authorized to login" }
+        // }
         setUser(response.data.user)
-        return { success: true }
+        return { success: true,
+          role: response.data.user.role
+         }
       } else {
         return { success: false, error: response.error || "Login failed" }
       }
