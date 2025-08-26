@@ -279,6 +279,8 @@ export function UserSidebar() {
           <Separator className="my-4 bg-sidebar-border" />
         </div>
       </ScrollArea>
+      
+      <Separator className="my-4 bg-sidebar-border" />
 
       {/* User Section */}
       <div className="p-4 border-t border-sidebar-border">
@@ -288,24 +290,19 @@ export function UserSidebar() {
             {!collapsed && (
               <a href="/profile" className="mb-3">
                 <div className="flex items-center gap-3 mb-2">
-                  <Avatar className="h-8 w-8">
-                    {/* <AvatarImage src={user?.avatar_url} /> */}
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {(user.full_name || user.username || 'U').charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-sidebar-foreground truncate">
+                    {/* <p className="text-sm font-medium text-sidebar-foreground truncate">
                       {user.full_name || user.username}
-                    </p>
+                    </p> */}
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </div>
-                {user.role === "admin" && (
+                {/* {user.role === "admin" && (
                   <span className="inline-block px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full">
                     Admin
                   </span>
-                )}
+                )} */}
               </a>
             )}
             <Button

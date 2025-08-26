@@ -167,7 +167,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-full">
+    <div className="h-full fixed">
       {/* <UserSidebar /> */}
       <ChatInterface sessionId={currentSession} />
     </div>
