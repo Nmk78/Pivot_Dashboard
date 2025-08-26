@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,7 +16,7 @@ interface ChatSession {
   updated_at: string
 }
 
-export function DashboardPageContent() {
+function DashboardPageContentInner() {
   const [currentSession, setCurrentSession] = useState<string | null>(null)
   const [recentSessions, setRecentSessions] = useState<ChatSession[]>([])
   const [loading, setLoading] = useState(true)
@@ -112,5 +112,17 @@ export function DashboardPageContent() {
     <div className="h-full">
       <ChatInterface sessionId={currentSession} />
     </div>
+  )
+}
+
+export function DashboardPageContent() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <DashboardPageContentInner />
+    </Suspense>
   )
 }
