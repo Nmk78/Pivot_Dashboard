@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/hooks/use-auth"
-import { getUserSessions } from "@/lib/api-client-new"
+import { getUserSessions, updateCurrentUser } from "@/lib/api-client-new"
 import { 
   User, 
   LogOut,
@@ -41,10 +41,12 @@ interface UserStats {
 }
 
 export default function ProfilePage() {
-  const { user, loading, logout } = useAuth()
+  const { user, loading, logout, refreshUser } = useAuth()
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [userStats, setUserStats] = useState<UserStats | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({
     full_name: "",
     email: "",
@@ -84,8 +86,32 @@ export default function ProfilePage() {
   }
 
   const handleSaveProfile = async () => {
-    // TODO: Implement profile update API call
-    console.log("Saving profile:", editForm)
+    if (!user) return
+    
+    setIsSaving(true)
+    setSaveError(null)
+    
+    try {
+      const updateData = {
+        full_name: editForm.full_name.trim(),
+        username: editForm.username.trim()
+      }
+      
+      const response = await updateCurrentUser(updateData)
+      
+      if (response.data) {
+        // Refresh user data to reflect changes
+        await refreshUser()
+      } else {
+        setSaveError(response.error || "Failed to update profile")
+        return
+      }
+    } catch (error) {
+      setSaveError("Network error occurred while updating profile")
+      return
+    } finally {
+      setIsSaving(false)
+    }
     setIsEditing(false)
   }
 
@@ -256,7 +282,11 @@ export default function ProfilePage() {
                   </div>
 
                   {isEditing && (
-                    <Button onClick={handleSaveProfile} className="w-full">
+                    <Button 
+                      onClick={handleSaveProfile} 
+                      className="w-full"
+                      disabled={isSaving}
+                    >
                       <Save className="h-4 w-4 mr-2" />
                       Save Changes
                     </Button>

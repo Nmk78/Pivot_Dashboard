@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Loader2, Send, User, Bot, Paperclip, Mic, MicOff, Play, Pause, FileText, Image, Video, Music, X } from "lucide-react"
-import { sendChatMessage, getChatHistory } from "@/lib/api-client-new"
+import { sendChatMessage, getChatHistory, speech, textWithFile } from "@/lib/api"
 import { useAuth } from "@/hooks/use-auth"
 
 interface Message {
@@ -57,8 +57,10 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
     const loadHistory = async () => {
       try {
         const response = await getChatHistory(sessionId)
-        if (response.data?.messages) {
-          setMessages(response.data.messages)
+        if (response.data && Array.isArray(response.data)) {
+          setMessages(response.data)
+        } else if (response.data && (response.data as any).messages) {
+          setMessages((response.data as any).messages)
         }
       } catch (error) {
         console.error("Failed to load chat history:", error)
@@ -119,29 +121,90 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
     setLoading(true)
 
     try {
-      const messageType = audioBlob ? "audio" : (attachments.length > 0 ? "file" : "text")
+      let response
       
-      const response = await sendChatMessage(sessionId, {
-        role: "user",
-        content: userMessage.content,
-        message_type: messageType,
-      })
+      if (audioBlob) {
+        // Handle speech input using speech function
+        const audioFile = new File([audioBlob], 'voice-message.wav', { type: 'audio/wav' })
+        response = await speech(sessionId, audioFile)
+      } else if (attachments.length > 0) {
+        // Handle text with file using textWithFile function
+        const query = input.trim() || "What is this file about?"
+        response = await textWithFile(sessionId, query, attachments[0], true)
+      } else {
+        // Handle regular text message using sendChatMessage function
+        response = await sendChatMessage(sessionId, {
+          role: "user",
+          content: userMessage.content,
+          message_type: "text",
+        })
+      }
+      console.log("🚀 ~ handleSendMessage ~ response:", response)
 
       if (response.data) {
+        let assistantContent = ""
+        let assistantId = ""
+        let assistantCreatedAt = ""
+        
+        if (audioBlob) {
+          // Speech response format
+          assistantContent = (response.data as any).response || (response.data as any).content || "Speech processed successfully"
+          assistantId = (response.data as any).audio_file_id || Date.now().toString()
+          assistantCreatedAt = new Date().toISOString()
+        } else if (attachments.length > 0) {
+          // Text with file response format
+          assistantContent = (response.data as any).response || (response.data as any).content || "File processed successfully"
+          assistantId = Date.now().toString()
+          assistantCreatedAt = new Date().toISOString()
+        } else {
+          // Regular chat response format
+          assistantContent = (response.data as any).content || "Message sent successfully"
+          assistantId = (response.data as any).message_id || Date.now().toString()
+          assistantCreatedAt = (response.data as any).created_at || new Date().toISOString()
+        }
+        
         const assistantMessage: Message = {
-          id: response.data.message_id,
+          id: assistantId,
           role: "assistant",
-          content: response.data.content,
-          created_at: response.data.created_at,
+          content: assistantContent,
+          created_at: assistantCreatedAt,
         }
         setMessages((prev) => [...prev, assistantMessage])
+      }else if(response.error){
+        const errorMessage: Message = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: response.error,
+          created_at: new Date().toISOString(),
+        }
+        setMessages((prev) => [...prev, errorMessage])
       }
     } catch (error) {
       console.error("Failed to send message:", error)
+      
+      let errorContent = "Sorry, I encountered an error. Please try again."
+      
+      // Handle specific error types
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMessage = (error as any).message
+        if (errorMessage?.includes('Unsupported file type')) {
+          errorContent = "This file type is not supported. Please try uploading a different file format (PDF, TXT, DOC, etc.)."
+        }
+      }
+      
+      // Handle API response errors
+      if (error && typeof error === 'object' && 'detail' in error) {
+        const detail = (error as any).detail
+        if (typeof detail === 'string' && detail.includes('Unsupported file type')) {
+          const fileType = detail.match(/Unsupported file type: (\.\w+)/)?.[1] || 'this file type'
+          errorContent = `${fileType} files are not supported. Please try uploading a different file format (PDF, TXT, DOC, DOCX, etc.).`
+        }
+      }
+      
       const errorMessage: Message = {
         id: Date.now().toString(),
         role: "assistant",
-        content: "Sorry, I encountered an error. Please try again.",
+        content: errorContent,
         created_at: new Date().toISOString(),
       }
       setMessages((prev) => [...prev, errorMessage])
@@ -256,11 +319,11 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex min-w-full h-full">
       <div className="flex-1">
       <div className="flex flex-col h-full ">
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4 overflow-y-scroll" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 min-w-full p-4 overflow-y-scroll" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">

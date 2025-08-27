@@ -6,7 +6,8 @@ import { ArrowLeft, Home, MessageSquare, Search } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900 flex items-center justify-center p-4">
+    {/* <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 flex items-center justify-center p-4"> */}
       <div className="text-center space-y-8 max-w-2xl mx-auto relative">
         {/* Animated 404 */}
         <div className="relative">
@@ -24,7 +25,7 @@ export default function NotFound() {
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
               Oops! Page Not Found
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md mx-auto">
+            <p className="text-lg text-purple-400 dark:text-gray-300 max-w-md mx-auto">
               The page you're looking for seems to have vanished into the digital void. 
               Let's get you back on track.
             </p>

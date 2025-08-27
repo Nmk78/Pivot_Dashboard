@@ -188,3 +188,43 @@ export const deleteFile = async (fileId: string) => {
     method: "DELETE",
   })
 }
+
+// Speech API functions
+export const speech = async (sessionId: string, audioFile: File) => {
+  const formData = new FormData()
+  formData.append("session_id", sessionId)
+  formData.append("audio_file", audioFile)
+
+  return apiRequest("/speech", {
+    method: "POST",
+    headers: {},
+    body: formData,
+  })
+}
+
+// Text with file API functions
+export const textWithFile = async (
+  sessionId: string,
+  query: string,
+  file: File,
+  useAuth = false
+) => {
+  const formData = new FormData()
+  formData.append("session_id", sessionId)
+  formData.append("query", query)
+  formData.append("file", file)
+
+  const headers: Record<string, string> = {}
+  if (useAuth) {
+    const token = getAuthToken()
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
+  }
+
+  return apiRequest("/chat/text-with-file", {
+    method: "POST",
+    headers,
+    body: formData,
+  })
+}

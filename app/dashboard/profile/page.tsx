@@ -198,10 +198,10 @@ export default function ProfilePage() {
         </Card>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
-            {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
+            {/* {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>} */}
           </TabsList>
 
           {/* Overview Tab */}
@@ -369,7 +369,7 @@ export default function ProfilePage() {
           </TabsContent>
 
           {/* Admin Tab - Only visible to admins */}
-          {isAdmin && (
+          {/* {isAdmin && (
             <TabsContent value="admin" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -403,7 +403,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             </TabsContent>
-          )}
+          )} */}
         </Tabs>
       </div>
     </div>

@@ -109,7 +109,7 @@ export default function OverviewPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold font-playfair">Dashboard Overview</h1>
+            <h1 className="text-3xl font-bold font-playfair">Overview</h1>
             <p className="text-muted-foreground">Welcome back, {user?.full_name || user?.username}</p>
           </div>
           <Button onClick={handleNewChat} disabled={creatingSession} size="lg">
@@ -176,7 +176,7 @@ export default function OverviewPage() {
         </div>
 
         {/* Main Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Chat Interface */}
           <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/dashboard')}>
             <CardHeader>
@@ -226,7 +226,7 @@ export default function OverviewPage() {
           </Card>
 
           {/* Analytics */}
-          <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/dashboard/analytics')}>
+          {/* <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/dashboard/analytics')}>
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <BarChart3 className="h-6 w-6 text-primary" />
@@ -247,7 +247,7 @@ export default function OverviewPage() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Session Management */}
           <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/dashboard/sessions')}>
@@ -274,7 +274,7 @@ export default function OverviewPage() {
           </Card>
 
           {/* User Profile */}
-          <Card className="hover:shadow-lg transition-all">
+          {/* <Card className="hover:shadow-lg transition-all">
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <Users className="h-6 w-6 text-primary" />
@@ -299,7 +299,7 @@ export default function OverviewPage() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Quick Actions */}
           <Card className="hover:shadow-lg transition-all">

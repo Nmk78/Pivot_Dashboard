@@ -20,7 +20,7 @@ const navigation = [
   { name: "Chat", href: "/dashboard/chat", icon: MessageSquare },
   { name: "Sessions", href: "/dashboard/sessions", icon: MessageSquare },
   { name: "Files", href: "/dashboard/files", icon: FileText },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+  // { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   // { name: "Speech", href: "/dashboard/speech", icon: Mic },
   // { name: "Search", href: "/dashboard/search", icon: Search },
 ]
