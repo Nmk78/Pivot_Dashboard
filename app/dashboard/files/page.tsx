@@ -44,7 +44,7 @@ export default function FilesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const itemsPerPage = 15; // Number of files per page
+  const itemsPerPage = 12; // Number of files per page
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -262,7 +262,7 @@ export default function FilesPage() {
             )}
           </div>
         ) : (
-          <div className="grid gap-5 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid gap-5 md:grid-cols-4 lg:grid-cols-4">
             {filteredFiles.map((file) => (
               <Card
                 key={file.file_id}
