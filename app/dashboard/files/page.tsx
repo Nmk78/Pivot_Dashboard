@@ -14,10 +14,9 @@ import { Loader2, Upload, FileText, Trash2, Search, Download } from "lucide-reac
 import { useToast } from "@/hooks/use-toast"
 
 interface UploadedFile {
-  id: string
+  file_id: string
   filename: string
-  upload_date: string
-  size: number
+  created_at: string
 }
 
 export default function FilesPage() {
@@ -25,6 +24,8 @@ export default function FilesPage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6 // Number of files per page
   const { user } = useAuth()
   const { toast } = useToast()
 
@@ -101,7 +102,7 @@ export default function FilesPage() {
 
     try {
       await deleteFile(fileId)
-      setFiles((prev) => prev.filter((f) => f.id !== fileId))
+      setFiles((prev) => prev.filter((f) => f.file_id !== fileId))
       toast({
         title: "Success",
         description: "File deleted successfully",
@@ -125,6 +126,23 @@ export default function FilesPage() {
   }
 
   const filteredFiles = files.filter((file) => file.filename.toLowerCase().includes(searchQuery.toLowerCase()))
+  const totalPages = Math.ceil(filteredFiles.length / itemsPerPage)
+  const paginatedFiles = filteredFiles.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1)
+    }
+  }
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1)
+    }
+  }
 
   if (loading) {
     return (
@@ -138,26 +156,26 @@ export default function FilesPage() {
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-border">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold font-playfair">File Management</h1>
-            <p className="text-muted-foreground">Upload and manage documents for RAG processing</p>
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+          <div className="">
+        <h1 className="text-2xl font-bold font-playfair">File Management</h1>
+        <p className="text-muted-foreground">Upload and manage documents for RAG processing</p>
           </div>
           {isAdmin && (
-            <div className="relative">
-              <input
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                disabled={uploading}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                accept=".pdf,.doc,.docx,.txt"
-              />
-              <Button disabled={uploading}>
-                {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                Upload Files
-              </Button>
-            </div>
+        <div className="relative w-full sm:w-auto">
+          <input
+            type="file"
+            multiple
+            onChange={handleFileUpload}
+            disabled={uploading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            accept=".pdf,.doc,.docx,.txt"
+          />
+          <Button disabled={uploading} className="w-full sm:w-auto">
+            {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+            Upload Files
+          </Button>
+        </div>
           )}
         </div>
 
@@ -165,26 +183,26 @@ export default function FilesPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search files..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+        placeholder="Search files..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="pl-10"
           />
         </div>
 
         {!isAdmin && (
           <div className="mt-4 p-3 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground">
-              <strong>Note:</strong> Only admin users can upload and delete files. Contact your administrator to manage
-              files.
-            </p>
+        <p className="text-sm text-muted-foreground">
+          <strong>Note:</strong> Only admin users can upload and delete files. Contact your administrator to manage
+          files.
+        </p>
           </div>
         )}
       </div>
 
       {/* Files List */}
       <ScrollArea className="flex-1 p-6">
-        {filteredFiles.length === 0 ? (
+        {paginatedFiles.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">No files found</h3>
@@ -210,22 +228,53 @@ export default function FilesPage() {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredFiles.map((file) => (
-              <Card key={file.id} className="hover:shadow-lg transition-shadow">
+            {paginatedFiles.map((file) => (
+              <Card key={file.file_id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-lg truncate flex items-center gap-2">
+                      <CardTitle className="text-lg flex items-center gap-2">
                         <FileText className="h-5 w-5 text-primary" />
-                        {file.filename}
+                        <span
+                          className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                          title={file.filename}
+                        >
+                          {file.filename}
+                        </span>
+                        <Badge variant="outline" className="ml-2">
+                          {file.filename.split('.').pop()?.toUpperCase()}
+                        </Badge>
                       </CardTitle>
-                      <CardDescription className="mt-1">{formatFileSize(file.size)}</CardDescription>
+                        <CardDescription className="mt-1">
+                          {(() => {
+                          const createdAt = new Date(file.created_at);
+                          const now = new Date();
+                          const diffInMs = now.getTime() - createdAt.getTime();
+                          const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+                          const diffInHours = Math.floor(diffInMinutes / 60);
+                          const diffInDays = Math.floor(diffInHours / 24);
+
+                          const formattedDate = createdAt.toLocaleDateString(undefined, {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          });
+
+                          if (diffInMinutes < 60) {
+                            return `$created at ${diffInMinutes} minute(s) ago `;
+                          } else if (diffInHours < 24) {
+                            return ` created at ${diffInHours} hour(s) ago `;
+                          } else {
+                            return `  created at ${diffInDays} day(s) ago `;
+                          }
+                          })()}
+                        </CardDescription>
                     </div>
                     {isAdmin && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteFile(file.id)}
+                        onClick={() => handleDeleteFile(file.file_id)}
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -235,21 +284,44 @@ export default function FilesPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
-                    <span>Uploaded: {new Date(file.upload_date).toLocaleDateString()}</span>
+                    <span>Uploaded: {new Date(file.created_at).toLocaleDateString()}</span>
                     <Badge variant="secondary">Indexed</Badge>
                   </div>
-                  <div className="flex gap-2">
+                  {/* <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1 bg-transparent">
                       <Download className="mr-2 h-3 w-3" />
                       Download
                     </Button>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
       </ScrollArea>
+
+      {/* Pagination Controls */}
+      {filteredFiles.length > itemsPerPage && (
+        <div className="flex justify-between items-center p-6 border-t border-border">
+          <Button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            variant="outline"
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            variant="outline"
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
