@@ -4,32 +4,26 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/hooks/use-auth"
 import { getUserSessions } from "@/lib/api-client-new"
-import { 
-  User, 
-  Settings, 
-  Shield, 
-  MessageSquare, 
-  Calendar, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Edit, 
-  Save, 
+import {
+  User, Settings,
+  Shield,
+  MessageSquare, Edit,
+  Save,
   X,
   Crown,
   Users,
   BarChart3,
   Activity,
-  Clock
+  Clock,
+  LogOut
 } from "lucide-react"
 
 interface UserStats {
@@ -40,7 +34,7 @@ interface UserStats {
 }
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth()
+  const { user, loading, logout } = useAuth()
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [userStats, setUserStats] = useState<UserStats | null>(null)
@@ -344,12 +338,19 @@ export default function ProfilePage() {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <Label>Security</Label>
-                  <Button variant="outline" className="w-full">
-                    Change Password
+                
+                  <Button onClick={logout} variant="outline" className="w-full space-x-2 cursor-pointer">
+                    <LogOut className="h-4 w-4" /> 
+                    Logout
                   </Button>
-                </div>
+                  {/* <Button
+                                variant="ghost"
+                                onClick={logout}
+                                className={cn("w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent", collapsed && "px-2")}
+                              >
+                                <LogOut className="h-4 w-4" />
+                                {!collapsed && <span className="ml-2">Logout</span>}
+                              </Button> */}
               </CardContent>
             </Card>
           </TabsContent>

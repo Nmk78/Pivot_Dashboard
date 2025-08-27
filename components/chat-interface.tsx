@@ -256,9 +256,11 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex flex-col h-full overflow-y-scroll">
+    <div className="flex h-full">
+      <div className="flex-1">
+      <div className="flex flex-col h-full ">
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 p-4 overflow-y-scroll" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
@@ -480,6 +482,8 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
           </Button>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   )
 }

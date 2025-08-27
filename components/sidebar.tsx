@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/hooks/use-auth"
-import { MessageSquare, FileText, Users, BarChart3, Settings, LogOut, Menu, X, Mic, Search, Plus, Home, Loader2 } from "lucide-react"
+import { MessageSquare, FileText, Users, BarChart3, Settings, LogOut, Menu, X, Mic, Search, Plus, Home, Loader2, CircleUser } from "lucide-react"
 
 
 import { createChatSession, getUserSessions } from "@/lib/api-client-new"
 import { useRouter } from "next/navigation"
+import { profile } from "console"
 
 const navigation = [
   { name: "Overview", href: "/dashboard/overview", icon: Home },
@@ -124,26 +125,32 @@ export function Sidebar() {
       </ScrollArea>
 
       {/* User Section */}
-      <div className="p-4 border-t border-sidebar-border">
+      <div 
+          className={cn("w-full flex space-x-2 mb-2 flex-row justify-start items-center font-bold text-sidebar-foregroun hover:bg-primary/90 p-3 border rounded-md", collapsed && "px-2")}
+        >
+          
         {!collapsed && user && (
-          <a href={ isAdmin ? "/dashboard/profile" : "/profile"} className="mb-3">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">{user.full_name || user.username}</p>
-            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-            {user.role === "admin" && (
+          <a href={ isAdmin ? "/dashboard/profile" : "/profile"} className="flex space-x-2 space-y-0">
+            <CircleUser className="h-8 w-8 mt-1" />
+            <div>
+              <p className="text-sm font-medium text-sidebar-foreground truncate">{user.username}</p>
+              <p className="text-xs text-white truncate">{user.email}</p>
+            </div>
+            {/* {user.role === "admin" && (
               <span className="inline-block px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full mt-1">
                 Admin
               </span>
-            )}
+            )} */}
           </a>
         )}
-        <Button
+        {/* <Button
           variant="ghost"
           onClick={logout}
           className={cn("w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent", collapsed && "px-2")}
         >
           <LogOut className="h-4 w-4" />
           {!collapsed && <span className="ml-2">Logout</span>}
-        </Button>
+        </Button> */}
       </div>
     </div>
   )

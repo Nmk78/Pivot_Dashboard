@@ -26,31 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light" style={{colorScheme:"light"}}>
-      <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-  --font-playfair: ${playfair.variable};
-}
-        `}</style>
-      </head>
-      <body className="flex flex-row h-screen">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-        >
-          <AuthProvider>
-            <UserSidebar />
+
+        // <ThemeProvider
+        //   attribute="class"
+        //   defaultTheme="light"
+        //   enableSystem={false}
+        // >
+        //   <AuthProvider>
+        //     <UserSidebar />
 
             <main className="flex-1 overflow-hidden">{children}</main>
-            <Toaster />
-          </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+        //     <Toaster />
+        //   </AuthProvider>
+        // </ThemeProvider>
   );
 }

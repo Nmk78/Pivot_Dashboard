@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useAuth } from "@/hooks/use-auth"
 import { getUserSessions, createChatSession, updateChatSession } from "@/lib/api-client-new"
-import { MessageSquare, FileText, Users, BarChart3, Settings, LogOut, Menu, X, Mic, Search, Plus, Home, User, Edit2, Check, X as XIcon } from "lucide-react"
+import { MessageSquare, FileText, Users, BarChart3, Settings, LogOut, Menu, X, Mic, Search, Plus, Home, User, Edit2, CircleUser, Check, X as XIcon, LogIn } from "lucide-react"
 
 // const navigation = [
 //   { name: "Overview", href: "/dashboard/overview", icon: Home },
@@ -288,13 +288,13 @@ function UserSidebarInner() {
           <>
             {/* Logged in user */}
             {!collapsed && (
-              <a href="/profile" className="mb-3">
+              <a href="/profile" className="flex space-x-2 space-y-0">
                 <div className="flex items-center gap-3 mb-2">
-                 
+                  <CircleUser className="h-8 w-8 mt-1" />
                   <div className="flex-1 min-w-0">
-                    {/* <p className="text-sm font-medium text-sidebar-foreground truncate">
-                      {user.full_name || user.username}
-                    </p> */}
+                    <p className="text-sm font-medium text-sidebar-foreground truncate">
+                      {user.username}
+                    </p>
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </div>
@@ -305,14 +305,14 @@ function UserSidebarInner() {
                 )} */}
               </a>
             )}
-            <Button
+            {/* <Button
               variant="ghost"
               onClick={logout}
               className={cn("w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent", collapsed && "px-2")}
             >
               <LogOut className="h-4 w-4" />
               {!collapsed && <span className="ml-2">Logout</span>}
-            </Button>
+            </Button> */}
           </>
         ) : (
           <>
@@ -338,7 +338,7 @@ function UserSidebarInner() {
               className={cn("w-full justify-start", collapsed && "px-2")}
             >
               <Link href="/auth/login">
-                <User className="h-4 w-4" />
+                <LogIn className="h-4 w-4" />
                 {!collapsed && <span className="ml-2">Login</span>}
               </Link>
             </Button>
