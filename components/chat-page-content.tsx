@@ -7,8 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChatInterface } from "@/components/chat-interface"
 import { createChatSession, getUserSessions } from "@/lib/api-client-new"
 import { Loader2, MessageSquare, Plus } from "lucide-react"
-import { Sidebar } from "@/components/sidebar"
-import { UserSidebar } from "@/components/userSidebar"
 
 interface ChatSession {
   id: string
@@ -18,7 +16,7 @@ interface ChatSession {
   updated_at: string
 }
 
-function ChatPageContent() {
+function ChatPageContentInner() {
   const [currentSession, setCurrentSession] = useState<string | null>(null)
   const [recentSessions, setRecentSessions] = useState<ChatSession[]>([])
   const [loading, setLoading] = useState(true)
@@ -167,22 +165,20 @@ function ChatPageContent() {
   }
 
   return (
-    <>
-      {/* <UserSidebar /> */}
+    <div className="h-full">
       <ChatInterface sessionId={currentSession} />
-    </>
+    </div>
   )
 }
 
-
-export default function ChatPage() {
+export function ChatPageContent() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center h-full">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>
-      <ChatPageContent />
+      <ChatPageContentInner />
     </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -37,7 +37,7 @@ interface ChatSession {
   updated_at: string
 }
 
-export function UserSidebar() {
+function UserSidebarInner() {
   const [collapsed, setCollapsed] = useState(false)
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [loadingSessions, setLoadingSessions] = useState(false)
@@ -346,5 +346,17 @@ export function UserSidebar() {
         )}
       </div>
     </div>
+  )
+}
+
+export function UserSidebar() {
+  return (
+    <Suspense fallback={
+      <div className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    }>
+      <UserSidebarInner />
+    </Suspense>
   )
 }

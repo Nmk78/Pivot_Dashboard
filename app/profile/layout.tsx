@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Playfair_Display } from "next/font/google";
@@ -44,7 +45,9 @@ html {
           enableSystem={false}
         >
           <AuthProvider>
-            <UserSidebar />
+            <Suspense fallback={<div className="w-64 bg-background border-r" />}>
+              <UserSidebar />
+            </Suspense>
 
             <main className="flex-1 overflow-hidden">{children}</main>
             <Toaster />

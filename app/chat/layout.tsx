@@ -1,4 +1,5 @@
 import type React from "react";
+import { Suspense } from "react";
 import { UserSidebar } from "@/components/userSidebar";
 
 export default function ChatLayout({
