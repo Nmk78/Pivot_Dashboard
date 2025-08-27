@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/hooks/use-auth"
-import { getUserSessions } from "@/lib/api-client-new"
+import { getUserSessions, updateCurrentUser } from "@/lib/api-client-new"
 import {
   User, Settings,
   Shield,
@@ -77,9 +77,22 @@ export default function ProfilePage() {
   }
 
   const handleSaveProfile = async () => {
-    // TODO: Implement profile update API call
-    console.log("Saving profile:", editForm)
-    setIsEditing(false)
+    try {
+      const response = await updateCurrentUser({
+        full_name: editForm.full_name,
+        username: editForm.username,
+      });
+
+      if (response.data) {
+        console.log("Profile updated successfully:", response.data);
+        setIsEditing(false);
+        window.location.reload(); 
+      } else {
+        console.error("Failed to update profile:", response.error);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -203,7 +216,7 @@ export default function ProfilePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
+                  <div className="flex space-x-2">
                     <Label htmlFor="full_name">Full Name</Label>
                     {isEditing ? (
                       <Input
@@ -212,11 +225,11 @@ export default function ProfilePage() {
                         onChange={(e) => setEditForm(prev => ({ ...prev, full_name: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground">{user.full_name || "Not provided"}</p>
+                      <p className="text-sm text-muted-foreground">: {user.full_name || "Not provided"}</p>
                     )}
                   </div>
                   
-                  <div>
+                  <div className="flex space-x-2">
                     <Label htmlFor="username">Username</Label>
                     {isEditing ? (
                       <Input
@@ -225,11 +238,11 @@ export default function ProfilePage() {
                         onChange={(e) => setEditForm(prev => ({ ...prev, username: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground">{user.username}</p>
+                      <p className="text-sm text-muted-foreground">: {user.username}</p>
                     )}
                   </div>
                   
-                  <div>
+                  <div className="flex space-x-2">
                     <Label htmlFor="email">Email</Label>
                     {isEditing ? (
                       <Input
@@ -239,13 +252,13 @@ export default function ProfilePage() {
                         onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm text-muted-foreground">: {user.email}</p>
                     )}
                   </div>
 
-                  <div>
+                  <div className="flex space-x-2">
                     <Label>Account Status</Label>
-                    <p className="text-sm text-muted-foreground capitalize">{user.status || "Active"}</p>
+                    <p className="text-sm text-muted-foreground capitalize">: {user.status || "Active"}</p>
                   </div>
 
                   {isEditing && (
