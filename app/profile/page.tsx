@@ -192,10 +192,10 @@ export default function ProfilePage() {
         </Card>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
-            {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
+            {/* {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>} */}
           </TabsList>
 
           {/* Overview Tab */}
@@ -210,7 +210,7 @@ export default function ProfilePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
+                  <div className="flex space-x-2">
                     <Label htmlFor="full_name">Full Name</Label>
                     {isEditing ? (
                       <Input
@@ -219,11 +219,11 @@ export default function ProfilePage() {
                         onChange={(e) => setEditForm(prev => ({ ...prev, full_name: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground">{user.full_name || "Not provided"}</p>
+                      <p className="text-sm text-muted-foreground">: {user.full_name || "Not provided"}</p>
                     )}
                   </div>
                   
-                  <div>
+                  <div className="flex space-x-2">
                     <Label htmlFor="username">Username</Label>
                     {isEditing ? (
                       <Input
@@ -232,11 +232,11 @@ export default function ProfilePage() {
                         onChange={(e) => setEditForm(prev => ({ ...prev, username: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground">{user.username}</p>
+                      <p className="text-sm text-muted-foreground">: {user.username}</p>
                     )}
                   </div>
                   
-                  <div>
+                  <div className="flex space-x-2">
                     <Label htmlFor="email">Email</Label>
                     {isEditing ? (
                       <Input
@@ -246,13 +246,13 @@ export default function ProfilePage() {
                         onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm text-muted-foreground">: {user.email}</p>
                     )}
                   </div>
 
-                  <div>
+                  <div className="flex space-x-2">
                     <Label>Account Status</Label>
-                    <p className="text-sm text-muted-foreground capitalize">{user.status || "Active"}</p>
+                    <p className="text-sm text-muted-foreground capitalize">: {user.status || "Active"}</p>
                   </div>
 
                   {isEditing && (
@@ -357,7 +357,7 @@ export default function ProfilePage() {
           </TabsContent>
 
           {/* Admin Tab - Only visible to admins */}
-          {isAdmin && (
+          {/* {isAdmin && (
             <TabsContent value="admin" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -391,7 +391,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             </TabsContent>
-          )}
+          )} */}
         </Tabs>
       </div>
     </div>
