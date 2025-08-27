@@ -135,7 +135,7 @@ export default function SessionsPage() {
       </div>
 
       {/* Sessions List */}
-      <ScrollArea className="flex-1 p-6">
+      <ScrollArea className="flex-1 p-6 overflow-y-scroll">
         {filteredSessions.length === 0 ? (
           <div className="text-center py-12">
             <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />

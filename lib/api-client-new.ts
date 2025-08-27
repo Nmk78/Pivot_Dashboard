@@ -191,12 +191,18 @@ export const uploadFiles = async (files: FileList) => {
   })
 }
 
-export const getUploadedFiles = async () => {
-  return apiRequest("/files")
+interface UploadedFile {
+  file_id: string
+  filename: string
+  created_at: string
 }
 
-export const deleteFile = async (fileId: string) => {
-  return apiRequest(`/file/${fileId}`, {
+export const getUploadedFiles = async (): Promise<ApiResponse<{ files: UploadedFile[] }>> => {
+  return apiRequest<{ files: UploadedFile[] }>("/files")
+}
+
+export const deleteFile = async (fileId: string): Promise<ApiResponse<null>> => {
+  return apiRequest<null>(`/file/${fileId}`, {
     method: "DELETE",
   })
 }
