@@ -8,9 +8,9 @@ export default function ChatLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-auto min-h-screen">
+    <div className="flex flex-auto h-screen bg-background">
       <UserSidebar />
-      <main className="flex-1 overflow-hidden ">{children}</main>
+      <main className="flex-1 overflow-hidden container ">{children}</main>
     </div>
   );
 }

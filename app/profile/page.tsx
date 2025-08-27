@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { getUserSessions } from "@/lib/api-client-new"
 import { 
   User, 
+  LogOut,
   Settings, 
   Shield, 
   MessageSquare, 
@@ -40,7 +41,7 @@ interface UserStats {
 }
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth()
+  const { user, loading, logout } = useAuth()
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [userStats, setUserStats] = useState<UserStats | null>(null)
@@ -346,8 +347,9 @@ export default function ProfilePage() {
 
                 <div className="space-y-2">
                   <Label>Security</Label>
-                  <Button variant="outline" className="w-full">
-                    Change Password
+                  <Button onClick={logout} variant="outline" className="w-full space-x-2 cursor-pointer">
+                    <LogOut className="h-4 w-4" /> 
+                    Logout
                   </Button>
                 </div>
               </CardContent>
