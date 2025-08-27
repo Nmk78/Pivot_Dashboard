@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -213,7 +213,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSendMessage()
@@ -526,13 +526,14 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
           </Button>
           
           {/* Text input */}
-          <Input
+          <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
+            onKeyDown={handleKeyPress}
+            placeholder="Type your message... (Shift+Enter for new line)"
             disabled={loading || isRecording}
-            className="flex-1"
+            className="flex-1 min-h-[40px] max-h-32 resize-none"
+            rows={1}
           />
           
           {/* Send button */}

@@ -149,8 +149,8 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <Card>
           <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-4">
+          <div className="flex flex-col justify-center items-center space-y-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex items-center space-x-4">
                 <Avatar className="h-20 w-20">
                   <AvatarFallback className="text-lg">
                     {(user.full_name || user.username || 'U').charAt(0).toUpperCase()}
