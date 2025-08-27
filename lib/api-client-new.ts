@@ -197,12 +197,37 @@ interface UploadedFile {
   created_at: string
 }
 
-export const getUploadedFiles = async (): Promise<ApiResponse<{ files: UploadedFile[] }>> => {
-  return apiRequest<{ files: UploadedFile[] }>("/files")
+export const getUploadedFiles = async (page = 1, pageSize = 10): Promise<ApiResponse<{ files: UploadedFile[]; page: number; page_size: number; total_count: number; total_pages: number }>> => {
+  return apiRequest<{ files: UploadedFile[]; page: number; page_size: number; total_count: number; total_pages: number }>(`/files?page=${page}&page_size=${pageSize}`)
 }
 
 export const deleteFile = async (fileId: string): Promise<ApiResponse<null>> => {
   return apiRequest<null>(`/file/${fileId}`, {
     method: "DELETE",
   })
+}
+
+// Health API function - direct call to avoid base URL prefix
+export const getHealthStatus = async (): Promise<ApiResponse<{ status: string; response_time_ms: number; api_version?: string; model?: string; vector_store?: string }>> => {
+  try {
+    const baseUrl = API_BASE_URL.replace(/\/api\/v2$/, '') // Remove /api/v2 if present
+    const startTime = Date.now()
+    const response: AxiosResponse<{ status: string; api_version?: string; model?: string; vector_store?: string }> = await axios.get(`${baseUrl}/health`)
+    const endTime = Date.now()
+    const responseTime = endTime - startTime
+    
+    return {
+      data: {
+        ...response.data,
+        response_time_ms: responseTime
+      },
+      status: response.status,
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError<any>
+    return {
+      error: axiosError.response?.data?.detail || axiosError.message || "An error occurred",
+      status: axiosError.response?.status || 0,
+    }
+  }
 }

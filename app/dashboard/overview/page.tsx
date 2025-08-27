@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { getUserSessions, getUploadedFiles, createChatSession } from "@/lib/api-client-new"
+import { getUserSessions, getUploadedFiles, createChatSession, getHealthStatus } from "@/lib/api-client-new"
 import { useAuth } from "@/hooks/use-auth"
 import { 
   Loader2, 
@@ -47,25 +47,31 @@ export default function OverviewPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [sessionsResponse, filesResponse] = await Promise.all([
+      const [sessionsResponse, filesResponse, healthResponse] = await Promise.all([
         getUserSessions(10, 0),
-        getUploadedFiles()
+        getUploadedFiles(),
+        getHealthStatus()
       ])
+      console.log("🚀 ~ loadDashboardData ~ healthResponse:", healthResponse)
 
-      const sessions = sessionsResponse.data || []
+      const sessions = Array.isArray(sessionsResponse.data) ? sessionsResponse.data : []
       const files = filesResponse.data?.files || []
+      const totalFiles = filesResponse.data?.total_count || 0
 
       const now = new Date()
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-      const sessionsThisWeek = sessions.filter((s) => new Date(s.created_at) >= weekAgo).length
-      const filesThisWeek = files.filter((f) => new Date(f.upload_date) >= weekAgo).length
+      const sessionsThisWeek = sessions.filter((s: any) => new Date(s.created_at) >= weekAgo).length
+      const filesThisWeek = files.filter((f: any) => new Date(f.upload_date) >= weekAgo).length
+
+      const totalMessages = sessions.reduce((sum: number, session: any) => sum + (session.message_count || 0), 0)
+      const avgResponseTime = healthResponse.data?.response_time_ms || 1200
 
       setStats({
         totalSessions: sessions.length,
-        totalFiles: files.length,
-        totalMessages: sessions.length * 5, // Estimated
-        avgResponseTime: 1200,
+        totalFiles: totalFiles,
+        totalMessages: totalMessages,
+        avgResponseTime: avgResponseTime,
         sessionsThisWeek,
         filesThisWeek,
         recentSessions: sessions?.slice(0, 3),
@@ -131,9 +137,9 @@ export default function OverviewPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.totalSessions || 0}</div>
-              <p className="text-xs text-muted-foreground">
+              {/* <p className="text-xs text-muted-foreground">
                 +{stats?.sessionsThisWeek || 0} this week
-              </p>
+              </p> */}
             </CardContent>
           </Card>
 
@@ -169,7 +175,7 @@ export default function OverviewPage() {
             <CardContent>
               <div className="text-2xl font-bold">{stats?.avgResponseTime || 0}ms</div>
               <p className="text-xs text-muted-foreground">
-                <Badge variant="secondary" className="text-xs">Fast</Badge>
+                <Badge variant="secondary" className="text-xs">{stats?.avgResponseTime > 1500 ? "Slow" : "Fast"}</Badge>
               </p>
             </CardContent>
           </Card>
@@ -192,7 +198,7 @@ export default function OverviewPage() {
                   <span>Active Sessions</span>
                   <Badge variant="outline">{stats?.totalSessions || 0}</Badge>
                 </div>
-                <Progress value={75} className="h-2" />
+                {/* <Progress value={75} className="h-2" /> */}
                 <Button variant="outline" className="w-full">
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Open Chat
@@ -216,7 +222,7 @@ export default function OverviewPage() {
                   <span>Uploaded Files</span>
                   <Badge variant="outline">{stats?.totalFiles || 0}</Badge>
                 </div>
-                <Progress value={60} className="h-2" />
+                {/* <Progress value={60} className="h-2" /> */}
                 <Button variant="outline" className="w-full">
                   <Upload className="mr-2 h-4 w-4" />
                   Manage Files
@@ -264,7 +270,7 @@ export default function OverviewPage() {
                   <span>Recent Sessions</span>
                   <Badge variant="outline">{stats?.recentSessions?.length || 0}</Badge>
                 </div>
-                <Progress value={70} className="h-2" />
+                {/* <Progress value={70} className="h-2" /> */}
                 <Button variant="outline" className="w-full">
                   <Clock className="mr-2 h-4 w-4" />
                   View Sessions
