@@ -323,10 +323,10 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
       <div className="flex-1">
       <div className="flex flex-col h-full ">
       {/* Messages */}
-      <ScrollArea className="flex-1 min-w-full p-4 overflow-y-scroll" ref={scrollAreaRef}>
-        <div className="space-y-4">
+      <ScrollArea className="flex-1 min-w-full p-4 overflow-y-scroll mt-20 " ref={scrollAreaRef}>
+        <div className="space-y-4  overflow-y-hidden">
           {messages.length === 0 ? (
-            <div className="text-center text-muted-foreground py-8">
+            <div className="text-center text-muted-foreground">
               <Bot className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="text-lg font-semibold mb-2">Start a conversation</h3>
               <p>Ask me anything about your documents or just chat!</p>
@@ -338,7 +338,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
                 className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {message.role === "assistant" && (
-                  <Avatar className="h-8 w-8 bg-primary">
+                  <Avatar className="h-8 w-8">
                     <AvatarFallback>
                       <Bot className="h-4 w-4 text-primary-foreground" />
                     </AvatarFallback>
@@ -393,12 +393,11 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
                       ))}
                     </div>
                   )}
-                  
                   {/* Text content */}
                   {message.content && !message.content.startsWith('[') && (
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   )}
-                  
+                                    
                   <p
                     className={`text-xs mt-2 opacity-70 ${
                       message.role === "user" ? "text-primary-foreground" : "text-muted-foreground"
@@ -530,9 +529,9 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder="Type your message... (Shift+Enter for new line)"
+            placeholder="ask something..."
             disabled={loading || isRecording}
-            className="flex-1 min-h-[40px] max-h-32 resize-none"
+            className="flex-1 min-h-[40px] max-h-32 resize-none truncate"
             rows={1}
           />
           
