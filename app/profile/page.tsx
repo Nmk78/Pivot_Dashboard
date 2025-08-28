@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/hooks/use-auth"
 import { getUserSessions, updateCurrentUser } from "@/lib/api-client-new"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { 
   User, 
   LogOut,
@@ -32,6 +33,7 @@ import {
   Activity,
   Clock
 } from "lucide-react"
+import Link from "next/link"
 
 interface UserStats {
   totalSessions: number
@@ -49,7 +51,6 @@ export default function ProfilePage() {
   const [saveError, setSaveError] = useState<string | null>(null)
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loadingSessions, setLoadingSessions] = useState<boolean | null>(null)
-    const [editingSession, setEditingSession] = useState<string | null>(null);
   
   interface ChatSession {
   id: string;
@@ -110,6 +111,12 @@ export default function ProfilePage() {
       console.error("Failed to load user stats:", error)
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      loadUserSessions()
+    }
+  }, [user])
 
   const handleSaveProfile = async () => {
     if (!user) return
@@ -241,6 +248,37 @@ export default function ProfilePage() {
               </Button>
             </div>
           </CardHeader>
+        </Card>
+
+        {/* Mobile-only: Recent Chat Sessions */}
+        <Card className="md:hidden">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              Recent Chat Sessions
+            </CardTitle>
+            <CardDescription>
+              Quick access to your latest conversations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loadingSessions ? (
+              <p className="text-sm text-muted-foreground">Loading sessions...</p>
+            ) : sessions.length > 0 ? (
+              <ScrollArea className="h-72 overflow-y-auto">
+                <div className="space-y-3">
+                  {sessions.slice(0, 10).map((session) => (
+                    <Link key={session.id} href={`/chat?session=${session.id}`} className="flex flex-col rounded-md border p-3">
+                      <span className="text-sm font-medium truncate">{session.title}</span>
+                      <span className="text-xs text-muted-foreground">Updated {formatDate(session.updated_at)}</span>
+                    </Link>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <p className="text-sm text-muted-foreground">No recent sessions available.</p>
+            )}
+          </CardContent>
         </Card>
 
         <Tabs defaultValue="overview" className="w-full">
@@ -425,92 +463,22 @@ export default function ProfilePage() {
               </CardDescription>
               </CardHeader>
               <CardContent>
-              {user && sessions.length > 0 ? (
-                <>
-                <Separator className="my-4 bg-sidebar-border" />
-                <div className="space-y-1 w-auto overflow-hidden">
-                  <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2">
-                  Recent Sessions
-                  </h3>
-                  <ScrollArea className="flex-1 overflow-y-auto max-h-96 scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-thumb-sidebar-accent scrollbar-track-sidebar-border">
-                  {sessions.map((session) => (
-                    <div key={session.id} className="group">
-                    {editingSession === session.id ? (
-                      <div className="flex items-center gap-1 p-2">
-                      <Input
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                        className="h-6 text-xs"
-                        onKeyPress={(e) => {
-                        if (e.key === "Enter") saveSessionTitle();
-                        if (e.key === "Escape") cancelEditing();
-                        }}
-                        autoFocus
-                      />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={saveSessionTitle}
-                        className="h-6 w-6 p-0"
-                      >
-                        <Check className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-6 w-6 p-0"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                      </div>
-                    ) : (
-                      <Button
-                      variant={
-                        currentSessionId === session.id
-                        ? "secondary"
-                        : "ghost"
-                      }
-                      className={cn(
-                        "w-full justify-start text-left h-auto p-2 group-hover:bg-sidebar-accent",
-                        currentSessionId === session.id &&
-                        "bg-sidebar-accent text-sidebar-accent-foreground"
-                      )}
-                      onClick={() => handleSessionClick(session.id)}
-                      >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium truncate">
-                          {session.title}
-                        </p>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                          e.stopPropagation();
-                          startEditingSession(session);
-                          }}
-                          className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100"
-                        >
-                          <Edit2 className="h-3 w-3" />
-                        </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground truncate">
-                        {formatSessionDate(session.updated_at)}
-                        </p>
-                      </div>
-                      </Button>
-                    )}
+                {loadingSessions ? (
+                  <p className="text-sm text-muted-foreground">Loading sessions...</p>
+                ) : sessions.length > 0 ? (
+                  <ScrollArea className="h-96 overflow-y-auto">
+                    <div className="space-y-3">
+                      {sessions.map((session) => (
+                        <Link key={session.id} href={`/chat?session=${session.id}`} className="flex flex-col rounded-md border p-3">
+                          <span className="text-sm font-medium truncate">{session.title}</span>
+                          <span className="text-xs text-muted-foreground">Updated {formatDate(session.updated_at)}</span>
+                        </Link>
+                      ))}
                     </div>
-                  ))}
                   </ScrollArea>
-                </div>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                No recent sessions available.
-                </p>
-              )}
+                ) : (
+                  <p className="text-sm text-muted-foreground">No recent sessions available.</p>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

@@ -277,7 +277,7 @@ function UserSidebarInner() {
                 <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2">
                   Recent Sessions
                 </h3>
-                <ScrollArea className="flex-1 overflow-y-auto max-h-96 scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-thumb-sidebar-accent scrollbar-track-sidebar-border">
+                <ScrollArea className="h-96 overflow-y-auto ">
                 {/* <div className="flex-1 overflow-y-auto max-h-96 "> */}
 
                   {sessions.map((session) => (
