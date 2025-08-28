@@ -171,9 +171,9 @@ export default function ProfilePage() {
           <CardHeader>
             <div className="flex flex-col justify-center items-center space-y-4 md:flex-row md:items-start md:justify-between">
               <div className="flex items-center space-x-4">
-                <Avatar className="h-20 w-20">
+                <Avatar className=" size-14 md:size-20">
                   <AvatarFallback className="text-lg">
-                    {(user.full_name || user.username || 'U').charAt(0).toUpperCase()}
+                    {(user.full_name || user.username || '?').charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
