@@ -47,6 +47,32 @@ export default function ProfilePage() {
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState<boolean | null>(null)
+    const [editingSession, setEditingSession] = useState<string | null>(null);
+  
+  interface ChatSession {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+    const loadUserSessions = async () => {
+    if (!user) return;
+
+    setLoadingSessions(true);
+    try {
+      const response = await getUserSessions(10, 0);
+      if (response.data) {
+        setSessions(response.data as ChatSession[]);
+      }
+    } catch (error) {
+      console.error("Failed to load sessions:", error);
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
   const [editForm, setEditForm] = useState({
     full_name: "",
     email: "",
@@ -218,10 +244,10 @@ export default function ProfilePage() {
         </Card>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="recentsessions">Chat Sessions</TabsTrigger>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
-            {/* {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>} */}
           </TabsList>
 
           {/* Overview Tab */}
@@ -229,103 +255,103 @@ export default function ProfilePage() {
             <div className="grid gap-6 md:grid-cols-2">
               {/* Personal Information */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    Personal Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex space-x-2">
-                    <Label htmlFor="full_name">Full Name</Label>
-                    {isEditing ? (
-                      <Input
-                        id="full_name"
-                        value={editForm.full_name}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, full_name: e.target.value }))}
-                      />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">: {user.full_name || "Not provided"}</p>
-                    )}
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Label htmlFor="username">Username</Label>
-                    {isEditing ? (
-                      <Input
-                        id="username"
-                        value={editForm.username}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, username: e.target.value }))}
-                      />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">: {user.username}</p>
-                    )}
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Label htmlFor="email">Email</Label>
-                    {isEditing ? (
-                      <Input
-                        id="email"
-                        type="email"
-                        value={editForm.email}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
-                      />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">: {user.email}</p>
-                    )}
-                  </div>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Personal Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex space-x-2">
+              <Label htmlFor="full_name">Full Name</Label>
+              {isEditing ? (
+                <Input
+            id="full_name"
+            value={editForm.full_name}
+            onChange={(e) => setEditForm(prev => ({ ...prev, full_name: e.target.value }))}
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">: {user.full_name || "Not provided"}</p>
+              )}
+            </div>
+            
+            <div className="flex space-x-2">
+              <Label htmlFor="username">Username</Label>
+              {isEditing ? (
+                <Input
+            id="username"
+            value={editForm.username}
+            onChange={(e) => setEditForm(prev => ({ ...prev, username: e.target.value }))}
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">: {user.username}</p>
+              )}
+            </div>
+            
+            <div className="flex space-x-2">
+              <Label htmlFor="email">Email</Label>
+              {isEditing ? (
+                <Input
+            id="email"
+            type="email"
+            value={editForm.email}
+            onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">: {user.email}</p>
+              )}
+            </div>
 
-                  <div className="flex space-x-2">
-                    <Label>Account Status</Label>
-                    <p className="text-sm text-muted-foreground capitalize">: {user.status || "Active"}</p>
-                  </div>
+            <div className="flex space-x-2">
+              <Label>Account Status</Label>
+              <p className="text-sm text-muted-foreground capitalize">: {user.status || "Active"}</p>
+            </div>
 
-                  {isEditing && (
-                    <Button 
-                      onClick={handleSaveProfile} 
-                      className="w-full"
-                      disabled={isSaving}
-                    >
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Changes
-                    </Button>
-                  )}
-                </CardContent>
+            {isEditing && (
+              <Button 
+                onClick={handleSaveProfile} 
+                className="w-full"
+                disabled={isSaving}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </Button>
+            )}
+          </CardContent>
               </Card>
 
               {/* Activity Stats */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5" />
-                    Activity Stats
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {userStats ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Total Sessions</span>
-                        <Badge variant="secondary">{userStats.totalSessions}</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Total Messages</span>
-                        <Badge variant="secondary">{userStats.totalMessages}</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Member Since</span>
-                        <span className="text-sm">{formatDate(userStats.joinDate)}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Last Active</span>
-                        <span className="text-sm">{formatLastActive(userStats.lastActive)}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Loading stats...</p>
-                  )}
-                </CardContent>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Activity Stats
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {userStats ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Total Sessions</span>
+            <Badge variant="secondary">{userStats.totalSessions}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Total Messages</span>
+            <Badge variant="secondary">{userStats.totalMessages}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Member Since</span>
+            <span className="text-sm">{formatDate(userStats.joinDate)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Last Active</span>
+            <span className="text-sm">{formatLastActive(userStats.lastActive)}</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Loading stats...</p>
+            )}
+          </CardContent>
               </Card>
             </div>
           </TabsContent>
@@ -334,94 +360,160 @@ export default function ProfilePage() {
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Account Settings
-                </CardTitle>
-                <CardDescription>
-                  Manage your account preferences and security settings
-                </CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            Account Settings
+          </CardTitle>
+          <CardDescription>
+            Manage your account preferences and security settings
+          </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Account Type</Label>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={isAdmin ? "default" : "secondary"}>
-                      {isAdmin ? "Administrator" : "User"}
-                    </Badge>
-                    {isAdmin && <span className="text-sm text-muted-foreground">Full system access</span>}
-                  </div>
-                </div>
+          <div className="space-y-2">
+            <Label>Account Type</Label>
+            <div className="flex items-center gap-2">
+              <Badge variant={isAdmin ? "default" : "secondary"}>
+                {isAdmin ? "Administrator" : "User"}
+              </Badge>
+              {isAdmin && <span className="text-sm text-muted-foreground">Full system access</span>}
+            </div>
+          </div>
 
-                <Separator />
+          <Separator />
 
-                <div className="space-y-2">
-                  <Label>Account Information</Label>
-                  <div className="space-y-3">
-                    <div>
-                      <Label className="text-sm">User ID</Label>
-                      <p className="text-sm text-muted-foreground font-mono">{user.id}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm">Created</Label>
-                      <p className="text-sm text-muted-foreground">{formatDate(user.created_at)}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm">Last Login</Label>
-                      <p className="text-sm text-muted-foreground">{user.last_login ? formatLastActive(user.last_login) : "Never"}</p>
-                    </div>
-                  </div>
-                </div>
+          <div className="space-y-2">
+            <Label>Account Information</Label>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-sm">User ID</Label>
+                <p className="text-sm text-muted-foreground font-mono">{user.id}</p>
+              </div>
+              <div>
+                <Label className="text-sm">Created</Label>
+                <p className="text-sm text-muted-foreground">{formatDate(user.created_at)}</p>
+              </div>
+              <div>
+                <Label className="text-sm">Last Login</Label>
+                <p className="text-sm text-muted-foreground">{user.last_login ? formatLastActive(user.last_login) : "Never"}</p>
+              </div>
+            </div>
+          </div>
 
-                <Separator />
+          <Separator />
 
-                <div className="space-y-2">
-                  <Label>Security</Label>
-                  <Button onClick={logout} variant="outline" className="w-full space-x-2 cursor-pointer">
-                    <LogOut className="h-4 w-4" /> 
-                    Logout
-                  </Button>
-                </div>
+          <div className="space-y-2">
+            <Label>Security</Label>
+            <Button onClick={logout} variant="outline" className="w-full space-x-2 cursor-pointer">
+              <LogOut className="h-4 w-4" /> 
+              Logout
+            </Button>
+          </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Admin Tab - Only visible to admins */}
-          {/* {isAdmin && (
-            <TabsContent value="admin" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Admin Dashboard
-                  </CardTitle>
-                  <CardDescription>
-                    Administrative tools and system management
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Button variant="outline" className="h-20 flex-col">
-                      <Users className="h-6 w-6 mb-2" />
-                      <span>Manage Users</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col">
-                      <BarChart3 className="h-6 w-6 mb-2" />
-                      <span>System Analytics</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col">
-                      <MessageSquare className="h-6 w-6 mb-2" />
-                      <span>Chat Sessions</span>
-                    </Button>
-                    <Button variant="outline" className="h-20 flex-col">
-                      <Settings className="h-6 w-6 mb-2" />
-                      <span>System Settings</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )} */}
+          {/* Recent Sessions Tab */}
+          <TabsContent value="recentsessions" className="space-y-6">
+            <Card>
+              <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                Chat Sessions
+              </CardTitle>
+              <CardDescription>
+                View and manage your recent chat sessions
+              </CardDescription>
+              </CardHeader>
+              <CardContent>
+              {user && sessions.length > 0 ? (
+                <>
+                <Separator className="my-4 bg-sidebar-border" />
+                <div className="space-y-1 w-auto overflow-hidden">
+                  <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2">
+                  Recent Sessions
+                  </h3>
+                  <ScrollArea className="flex-1 overflow-y-auto max-h-96 scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-thumb-sidebar-accent scrollbar-track-sidebar-border">
+                  {sessions.map((session) => (
+                    <div key={session.id} className="group">
+                    {editingSession === session.id ? (
+                      <div className="flex items-center gap-1 p-2">
+                      <Input
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        className="h-6 text-xs"
+                        onKeyPress={(e) => {
+                        if (e.key === "Enter") saveSessionTitle();
+                        if (e.key === "Escape") cancelEditing();
+                        }}
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={saveSessionTitle}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Check className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={cancelEditing}
+                        className="h-6 w-6 p-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                      </div>
+                    ) : (
+                      <Button
+                      variant={
+                        currentSessionId === session.id
+                        ? "secondary"
+                        : "ghost"
+                      }
+                      className={cn(
+                        "w-full justify-start text-left h-auto p-2 group-hover:bg-sidebar-accent",
+                        currentSessionId === session.id &&
+                        "bg-sidebar-accent text-sidebar-accent-foreground"
+                      )}
+                      onClick={() => handleSessionClick(session.id)}
+                      >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                        <p className="text-xs font-medium truncate">
+                          {session.title}
+                        </p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                          e.stopPropagation();
+                          startEditingSession(session);
+                          }}
+                          className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100"
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">
+                        {formatSessionDate(session.updated_at)}
+                        </p>
+                      </div>
+                      </Button>
+                    )}
+                    </div>
+                  ))}
+                  </ScrollArea>
+                </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                No recent sessions available.
+                </p>
+              )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

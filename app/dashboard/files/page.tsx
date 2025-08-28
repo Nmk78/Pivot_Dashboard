@@ -44,7 +44,7 @@ export default function FilesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const itemsPerPage = 12; // Number of files per page
+  const itemsPerPage = 9; // Number of files per page
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -178,198 +178,191 @@ export default function FilesPage() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-x-hidden sm:overflow-x-visible">
       {/* Header */}
-      <div className="p-6 border-b border-border">
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
-          <div className="">
-            <h1 className="text-2xl font-bold font-playfair">
-              File Management
-            </h1>
-            <p className="text-muted-foreground">
-              Upload and manage documents for RAG processing
-            </p>
-          </div>
-          {isAdmin && (
-            <div className="relative w-full sm:w-auto">
-              <input
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                disabled={uploading}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                accept=".pdf,.doc,.docx,.txt"
-              />
-              <Button disabled={uploading} className="w-full sm:w-auto">
-                {uploading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Upload className="mr-2 h-4 w-4" />
-                )}
-                Upload Files
-              </Button>
-            </div>
-          )}
+      <div className="p-6 pb-0 border-b border-border">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+        <div className="">
+        <h1 className="text-2xl font-bold font-playfair">
+          File Management
+        </h1>
+        <p className="text-muted-foreground">
+          Upload and manage documents for RAG processing
+        </p>
         </div>
-
         {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search files..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+        <div className="relative w-full sm:w-1/2 mb-4 sm:mb-0">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search files..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
         </div>
-
-        {!isAdmin && (
-          <div className="mt-4 p-3 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground">
-              <strong>Note:</strong> Only admin users can upload and delete
-              files. Contact your administrator to manage files.
-            </p>
-          </div>
+        {isAdmin && (
+        <div className="relative w-full sm:w-auto">
+          <input
+          type="file"
+          multiple
+          onChange={handleFileUpload}
+          disabled={uploading}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          accept=".pdf,.doc,.docx,.txt"
+          />
+          <Button disabled={uploading} className="w-full sm:w-auto">
+          {uploading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="mr-2 h-4 w-4" />
+          )}
+          Upload Files
+          </Button>
+        </div>
         )}
       </div>
 
+      {!isAdmin && (
+        <div className="mt-4 p-3 bg-muted rounded-lg">
+        <p className="text-sm text-muted-foreground">
+          <strong>Note:</strong> Only admin users can upload and delete
+          files. Contact your administrator to manage files.
+        </p>
+        </div>
+      )}
+      </div>
+
       {/* Files List */}
-      <ScrollArea className="flex-1 p-6">
-        {filteredFiles.length === 0 ? (
-          <div className="text-center py-12">
-            <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No files found</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchQuery
-                ? "Try adjusting your search terms"
-                : "No files have been uploaded yet"}
-            </p>
-            {isAdmin && !searchQuery && (
-              <div className="relative inline-block">
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileUpload}
-                  disabled={uploading}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  accept=".pdf,.doc,.docx,.txt"
-                />
-                <Button disabled={uploading}>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload First File
-                </Button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="grid gap-5 md:grid-cols-4 lg:grid-cols-4">
-            {filteredFiles.map((file) => (
-              <Card
-                key={file.file_id}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-primary" />
-                        <span
-                          className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
-                          title={file.filename}
-                        >
-                          {file.filename}
-                        </span>
-                        <Badge variant="outline" className="ml-2">
-                          {file.filename.split(".").pop()?.toUpperCase()}
-                        </Badge>
-                      </CardTitle>
-                      <CardDescription className="mt-1">
-                        {(() => {
-                          const createdAt = new Date(file.created_at);
-                          const now = new Date();
-                          const diffInMs = now.getTime() - createdAt.getTime();
-                          const diffInMinutes = Math.floor(
-                            diffInMs / (1000 * 60)
-                          );
-                          const diffInHours = Math.floor(diffInMinutes / 60);
-                          const diffInDays = Math.floor(diffInHours / 24);
-
-                          const formattedDate = createdAt.toLocaleDateString(
-                            undefined,
-                            {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            }
-                          );
-
-                          if (diffInMinutes < 60) {
-                            return `$created at ${diffInMinutes} minute(s) ago `;
-                          } else if (diffInHours < 24) {
-                            return ` created at ${diffInHours} hour(s) ago `;
-                          } else {
-                            return `  created at ${diffInDays} day(s) ago `;
-                          }
-                        })()}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
-                    <span>
-                      Uploaded: {new Date(file.created_at).toLocaleDateString()}
-                    </span>
-                    {isAdmin && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteFile(file.file_id)}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                  {/* <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                      <Download className="mr-2 h-3 w-3" />
-                      Download
-                    </Button>
-                  </div> */}
-                </CardContent>
-              </Card>
-            ))}
+      <ScrollArea className="flex-1 p-6 sm:overflow-visible overflow-y-auto">
+      {filteredFiles.length === 0 ? (
+        <div className="text-center py-12">
+        <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+        <h3 className="text-lg font-semibold mb-2">No files found</h3>
+        <p className="text-muted-foreground mb-4">
+          {searchQuery
+          ? "Try adjusting your search terms"
+          : "No files have been uploaded yet"}
+        </p>
+        {isAdmin && !searchQuery && (
+          <div className="relative inline-block">
+          <input
+            type="file"
+            multiple
+            onChange={handleFileUpload}
+            disabled={uploading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            accept=".pdf,.doc,.docx,.txt"
+          />
+          <Button disabled={uploading}>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload First File
+          </Button>
           </div>
         )}
+        </div>
+      ) : (
+        <div className="grid gap-2 md:grid-cols-3 lg:grid-cols-3">
+        {filteredFiles.map((file) => (
+          <Card
+          key={file.file_id}
+          className="hover:shadow-lg transition-shadow p-4"
+          >
+          <CardHeader className="pb-2">
+            <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              <span
+                className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                title={file.filename}
+              >
+                {file.filename}
+              </span>
+              <Badge variant="outline" className="ml-2">
+                {file.filename.split(".").pop()?.toUpperCase()}
+              </Badge>
+              </CardTitle>
+              <CardDescription className="mt-1">
+              {(() => {
+                const createdAt = new Date(file.created_at);
+                const now = new Date();
+                const diffInMs = now.getTime() - createdAt.getTime();
+                const diffInMinutes = Math.floor(
+                diffInMs / (1000 * 60)
+                );
+                const diffInHours = Math.floor(diffInMinutes / 60);
+                const diffInDays = Math.floor(diffInHours / 24);
+
+                const formattedDate = createdAt.toLocaleDateString(
+                undefined,
+                {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }
+                );
+
+                if (diffInMinutes < 60) {
+                return `$created at ${diffInMinutes} minute(s) ago `;
+                } else if (diffInHours < 24) {
+                return ` created at ${diffInHours} hour(s) ago `;
+                } else {
+                return `  created at ${diffInDays} day(s) ago `;
+                }
+              })()}
+              </CardDescription>
+            </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
+            <span>
+              Uploaded: {new Date(file.created_at).toLocaleDateString()}
+            </span>
+            {isAdmin && (
+              <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDeleteFile(file.file_id)}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+              <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+            </div>
+          </CardContent>
+          </Card>
+        ))}
+        </div>
+      )}
       </ScrollArea>
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex justify-between items-center p-6 border-t border-border">
-          <Button
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1 || loading}
-            variant="outline"
-          >
-            Previous
-          </Button>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {totalCount} total files
-            </span>
-          </div>
-          <Button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages || loading}
-            variant="outline"
-          >
-            Next
-          </Button>
+      <div className="flex justify-between items-center p-6 border-t border-border">
+        <Button
+        onClick={handlePreviousPage}
+        disabled={currentPage === 1 || loading}
+        variant="outline"
+        >
+        Previous
+        </Button>
+        <div className="flex flex-col sm:flex-row items-center gap-1 text-center sm:text-left">
+        <span className="text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          ( {totalCount} total files )
+        </span>
         </div>
+        <Button
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages || loading}
+        variant="outline"
+        >
+        Next
+        </Button>
+      </div>
       )}
     </div>
   );
