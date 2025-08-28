@@ -43,6 +43,7 @@ import {
   LogIn,
   LayoutDashboard,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // const navigation = [
 //   { name: "Overview", href: "/dashboard/overview", icon: Home },
@@ -81,6 +82,7 @@ function UserSidebarInner() {
   const currentSessionId = searchParams.get("session");
 
   const isAdmin = user?.role === "admin";
+  const isMobile = useIsMobile();
 
   // Load user sessions
   useEffect(() => {
@@ -185,6 +187,32 @@ function UserSidebarInner() {
     }
   };
 
+  if (isMobile) {
+    return (
+      <div className="fixed top-0 left-0 w-full bg-sidebar border-b border-sidebar-border flex justify-between items-center py-2 px-4">
+        <a href="/" className="flex justify-center align-bottom space-x-0">
+          <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+          <span className="text-xs mt-auto font-bold text-sidebar-foreground">ivot</span>
+        </a>
+        <div className="flex items-center space-x-4">
+          {user ? (
+            <>
+                 <Link className="" href={isAdmin ? "/dashboard/profile" : "/profile"}>
+                  <User className="h-6 w-6" />
+                </Link>
+            </>
+          ) : (
+            <Button asChild variant="ghost">
+              <Link href="/auth/login">
+                <LogIn className="h-6 w-6" />
+              </Link>
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -213,8 +241,8 @@ function UserSidebarInner() {
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-3 py-4">
-        <div className="space-y-2">
+      <ScrollArea className="flex-1 px-3 py-4 ">
+        <div id="sessionContainer" className="space-y-2 ">
           {/* New Chat Button - Only show if user is logged in */}
           {user && (
             <Button
@@ -242,12 +270,17 @@ function UserSidebarInner() {
           {/* User Sessions - Only show if user is logged in and not collapsed */}
           {user && !collapsed && sessions.length > 0 && (
             <>
-              <Separator className="my-4 bg-sidebar-border" />
-              <div className="space-y-1">
+              <Separator className="my-4 bg-sidebar-border " />
+              <div
+                className="space-y-1 w-auto overflow-hidden"
+              >
                 <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2">
                   Recent Sessions
                 </h3>
-                {sessions.slice(0, 5).map((session) => (
+                <ScrollArea className="flex-1 overflow-y-auto max-h-96 scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-thumb-sidebar-accent scrollbar-track-sidebar-border">
+                {/* <div className="flex-1 overflow-y-auto max-h-96 "> */}
+
+                  {sessions.map((session) => (
                   <div key={session.id} className="group">
                     {editingSession === session.id ? (
                       <div className="flex items-center gap-1 p-2">
@@ -317,6 +350,7 @@ function UserSidebarInner() {
                     )}
                   </div>
                 ))}
+                </ScrollArea>
               </div>
             </>
           )}
