@@ -244,7 +244,8 @@ export default function ProfilePage() {
                   
                   <div className="flex space-x-2">
                     <Label htmlFor="email">Email</Label>
-                    {isEditing ? (
+                    <p className="text-sm text-muted-foreground">: {user.email}</p>
+                    {/* {isEditing ? (
                       <Input
                         id="email"
                         type="email"
@@ -253,7 +254,7 @@ export default function ProfilePage() {
                       />
                     ) : (
                       <p className="text-sm text-muted-foreground">: {user.email}</p>
-                    )}
+                    )} */}
                   </div>
 
                   <div className="flex space-x-2">
