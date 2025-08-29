@@ -336,7 +336,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Mobile-only: Recent Chat Sessions */}
-        <Card className="md:hidden">
+        {/* <Card className="md:hidden">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
@@ -364,7 +364,7 @@ export default function ProfilePage() {
               <p className="text-sm text-muted-foreground">No recent sessions available.</p>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
 
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-3">

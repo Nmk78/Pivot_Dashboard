@@ -151,7 +151,7 @@ export default function OverviewPage() {
             <CardContent>
               <div className="text-2xl font-bold">{stats?.totalFiles || 0}</div>
               <p className="text-xs text-muted-foreground">
-                +{stats?.filesThisWeek || 0} this week
+                {/* +{stats?.filesThisWeek || 0} this week */}
               </p>
             </CardContent>
           </Card>
