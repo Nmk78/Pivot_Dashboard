@@ -25,7 +25,6 @@ import {
 } from "@/lib/api-client-new";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   User,
   LogOut,
