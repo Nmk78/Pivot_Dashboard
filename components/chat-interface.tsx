@@ -321,232 +321,238 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
   return (
     <div className="flex min-w-full h-full">
       <div className="flex-1">
-      <div className="flex flex-col h-full ">
-      {/* Messages */}
-      <ScrollArea className="flex-1 min-w-full p-4 overflow-y-scroll mt-20 " ref={scrollAreaRef}>
-        <div className="space-y-4  overflow-y-hidden">
-          {messages.length === 0 ? (
-            <div className="text-center text-muted-foreground">
-              <Bot className="h-12 w-12 mx-auto mb-4 text-primary" />
-              <h3 className="text-lg font-semibold mb-2">Start a conversation</h3>
-              <p>Ask me anything about your documents or just chat!</p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {message.role === "assistant" && (
-                  <Avatar className="h-8 w-8">
+        <div className="flex flex-col h-full">
+          {/* Messages */}
+          <ScrollArea className="flex-1 min-w-full p-4 overflow-y-scroll mt-20" ref={scrollAreaRef}>
+            <div className="space-y-4 overflow-y-hidden">
+              {messages.length === 0 ? (
+                <div className="text-center text-muted-foreground">
+                  <Bot className="h-12 w-12 mx-auto mb-4 text-primary" />
+                  <h3 className="text-lg font-semibold mb-2">Start a conversation</h3>
+                  <p>Ask me anything about your documents or just chat!</p>
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    {message.role === "assistant" && (
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>
+                          <Bot className="h-4 w-4 text-primary-foreground" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    <Card
+                      className={`max-w-[80%] p-3 ${
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-card"
+                      }`}
+                    >
+                      {/* Audio message */}
+                      {message.audio_url && (
+                        <div className="mb-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleAudioPlayback(message.audio_url!)}
+                            className={`p-2 ${
+                              message.role === "user"
+                                ? "hover:bg-primary-foreground/20 text-primary-foreground"
+                                : "hover:bg-muted"
+                            }`}
+                          >
+                            {playingAudio === message.audio_url ? (
+                              <Pause className="h-4 w-4 mr-2" />
+                            ) : (
+                              <Play className="h-4 w-4 mr-2" />
+                            )}
+                            Voice message
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* File attachments */}
+                      {message.attachments && message.attachments.length > 0 && (
+                        <div className="mb-2 space-y-1">
+                          {message.attachments.map((attachment) => (
+                            <div
+                              key={attachment.id}
+                              className={`flex items-center gap-2 p-2 rounded border ${
+                                message.role === "user"
+                                  ? "border-primary-foreground/20 bg-primary-foreground/10"
+                                  : "border-border bg-muted/50"
+                              }`}
+                            >
+                              {getFileIcon(attachment.type)}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium truncate">{attachment.name}</p>
+                                <p className="text-xs opacity-70">{formatFileSize(attachment.size)}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Text content */}
+                      {message.content && !message.content.startsWith("[") && (
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      )}
+                                    
+                      <p
+                        className={`text-xs mt-2 opacity-70 ${
+                          message.role === "user"
+                            ? "text-primary-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {new Date(message.created_at).toLocaleTimeString()}
+                      </p>
+                    </Card>
+                    {message.role === "user" && (
+                      <Avatar className="h-8 w-8 bg-secondary">
+                        <AvatarFallback>
+                          <User className="h-4 w-4 text-secondary-foreground" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                ))
+              )}
+              {loading && (
+                <div className="flex gap-3 justify-start">
+                  <Avatar className="h-8 w-8 bg-primary">
                     <AvatarFallback>
                       <Bot className="h-4 w-4 text-primary-foreground" />
                     </AvatarFallback>
                   </Avatar>
-                )}
-                <Card
-                  className={`max-w-[80%] p-3 ${
-                    message.role === "user" ? "bg-primary text-primary-foreground" : "bg-card"
-                  }`}
-                >
-                  {/* Audio message */}
-                  {message.audio_url && (
-                    <div className="mb-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleAudioPlayback(message.audio_url!)}
-                        className={`p-2 ${
-                          message.role === "user" 
-                            ? "hover:bg-primary-foreground/20 text-primary-foreground" 
-                            : "hover:bg-muted"
-                        }`}
-                      >
-                        {playingAudio === message.audio_url ? (
-                          <Pause className="h-4 w-4 mr-2" />
-                        ) : (
-                          <Play className="h-4 w-4 mr-2" />
-                        )}
-                        Voice message
-                      </Button>
+                  <Card className="bg-card p-3">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm text-muted-foreground">Thinking...</span>
                     </div>
-                  )}
-                  
-                  {/* File attachments */}
-                  {message.attachments && message.attachments.length > 0 && (
-                    <div className="mb-2 space-y-1">
-                      {message.attachments.map((attachment) => (
-                        <div
-                          key={attachment.id}
-                          className={`flex items-center gap-2 p-2 rounded border ${
-                            message.role === "user"
-                              ? "border-primary-foreground/20 bg-primary-foreground/10"
-                              : "border-border bg-muted/50"
-                          }`}
-                        >
-                          {getFileIcon(attachment.type)}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">{attachment.name}</p>
-                            <p className="text-xs opacity-70">{formatFileSize(attachment.size)}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {/* Text content */}
-                  {message.content && !message.content.startsWith('[') && (
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  )}
-                                    
-                  <p
-                    className={`text-xs mt-2 opacity-70 ${
-                      message.role === "user" ? "text-primary-foreground" : "text-muted-foreground"
-                    }`}
-                  >
-                    {new Date(message.created_at).toLocaleTimeString()}
-                  </p>
-                </Card>
-                {message.role === "user" && (
-                  <Avatar className="h-8 w-8 bg-secondary">
-                    <AvatarFallback>
-                      <User className="h-4 w-4 text-secondary-foreground" />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-              </div>
-            ))
-          )}
-          {loading && (
-            <div className="flex gap-3 justify-start">
-              <Avatar className="h-8 w-8 bg-primary">
-                <AvatarFallback>
-                  <Bot className="h-4 w-4 text-primary-foreground" />
-                </AvatarFallback>
-              </Avatar>
-              <Card className="bg-card p-3">
-                <div className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">Thinking...</span>
+                  </Card>
                 </div>
-              </Card>
+              )}
             </div>
-          )}
-        </div>
-      </ScrollArea>
+          </ScrollArea>
 
-      {/* Input */}
-      <div className="p-4 border-t border-border">
-        {/* Attachments Preview */}
-        {attachments.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {attachments.map((file, index) => (
-              <div key={index} className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg">
-                {getFileIcon(file.type)}
-                <span className="text-sm truncate max-w-32">{file.name}</span>
+          {/* Input */}
+          <div className="p-4 border-t border-border">
+            {/* Attachments Preview */}
+            {attachments.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {attachments.map((file, index) => (
+                  <div key={index} className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg">
+                    {getFileIcon(file.type)}
+                    <span className="text-sm truncate max-w-32">{file.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeAttachment(index)}
+                      className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Recording indicator */}
+            {isRecording && (
+              <div className="mb-3 flex items-center gap-2 bg-red-50 dark:bg-red-950 px-3 py-2 rounded-lg">
+                <div className="h-2 w-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-sm text-red-600 dark:text-red-400">
+                  Recording... {formatRecordingTime(recordingTime)}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeAttachment(index)}
-                  className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                  onClick={stopRecording}
+                  className="ml-auto h-6 text-red-600 hover:text-red-700 hover:bg-red-100 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900"
                 >
-                  <X className="h-3 w-3" />
+                  Stop
                 </Button>
               </div>
-            ))}
-          </div>
-        )}
-        
-        {/* Recording indicator */}
-        {isRecording && (
-          <div className="mb-3 flex items-center gap-2 bg-red-50 dark:bg-red-950 px-3 py-2 rounded-lg">
-            <div className="h-2 w-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-sm text-red-600 dark:text-red-400">
-              Recording... {formatRecordingTime(recordingTime)}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={stopRecording}
-              className="ml-auto h-6 text-red-600 hover:text-red-700 hover:bg-red-100 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900"
-            >
-              Stop
-            </Button>
-          </div>
-        )}
-        
-        <div className="flex gap-2">
-          {/* File attachment button */}
-          <Dialog open={showAttachmentDialog} onOpenChange={setShowAttachmentDialog}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="icon" className="shrink-0 bg-transparent">
-                <Paperclip className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Attach Files</DialogTitle>
-                <DialogDescription>
-                  Select files to attach to your message. Supported formats: images, documents, audio, and video.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4">
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full"
-                >
-                  <Paperclip className="mr-2 h-4 w-4" />
-                  Choose Files
-                </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  accept="*/*"
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
-          
-          {/* Voice recording button */}
-          <Button
-            variant="outline"
-            size="icon"
-            className="shrink-0 bg-transparent"
-            onClick={isRecording ? stopRecording : startRecording}
-            disabled={loading}
-          >
-            {isRecording ? (
-              <MicOff className="h-4 w-4 text-red-500" />
-            ) : (
-              <Mic className="h-4 w-4" />
             )}
-          </Button>
-          
-          {/* Text input */}
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="ask something..."
-            disabled={loading || isRecording}
-            className="flex-1 min-h-[40px] max-h-32 resize-none truncate"
-            rows={1}
-          />
-          
-          {/* Send button */}
-          <Button 
-            onClick={() => handleSendMessage()} 
-            disabled={(!input.trim() && attachments.length === 0) || loading || isRecording} 
-            className="shrink-0"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          </Button>
+            
+            <div className="flex gap-2">
+              {/* File attachment button */}
+              <Dialog open={showAttachmentDialog} onOpenChange={setShowAttachmentDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon" className="shrink-0 bg-transparent">
+                    <Paperclip className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Attach Files</DialogTitle>
+                    <DialogDescription>
+                      Select files to attach to your message. Supported formats: images, documents, audio, and video.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4">
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full"
+                    >
+                      <Paperclip className="mr-2 h-4 w-4" />
+                      Choose Files
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      accept="*/*"
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
+              
+              {/* Voice recording button */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="shrink-0 bg-transparent"
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={loading}
+              >
+                {isRecording ? (
+                  <MicOff className="h-4 w-4 text-red-500" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+              </Button>
+              
+              {/* TODO FIX TEXT BOX EXPEND ISSUES */}
+              {/* Text input */}
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="ask something..."
+                disabled={loading || isRecording}
+                className="flex-1 min-h-[40px] max-h-32 resize-none truncate"
+                rows={1}
+              />
+              
+              {/* Send button */}
+              <Button 
+                onClick={() => handleSendMessage()} 
+                disabled={(!input.trim() && attachments.length === 0) || loading || isRecording} 
+                className="shrink-0"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    </div>
-    </div>
-  )
+  );
 }

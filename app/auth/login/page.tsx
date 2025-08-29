@@ -63,50 +63,61 @@ export default function LoginPage() {
           <CardDescription>Sign in to your RAG Chatbot account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Email</Label>
+              <Input
+              id="username"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              disabled={loading}
+              />
+              {error && error.toLowerCase().includes("username") && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="username">Username or Email</Label>
-              <Input
-                id="username"
-                name="username"
-                type="text"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                disabled={loading}
-              />
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                disabled={loading}
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              disabled={loading}
               />
+              {error && error.toLowerCase().includes("password") && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+              )}
             </div>
+
+            {/* Show general error if not specific to username/password */}
+            {error && !error.toLowerCase().includes("username") && !error.toLowerCase().includes("password") && (
+              <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing in...
+              </>
               ) : (
-                "Sign In"
+              "Sign In"
               )}
             </Button>
-          </form>
+            </form>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Don't have an account? </span>
