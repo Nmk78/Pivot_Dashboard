@@ -25,6 +25,7 @@ import {
 } from "@/lib/api-client-new";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   User,
   LogOut,
@@ -333,6 +334,37 @@ export default function ProfilePage() {
               </Button>
             </div>
           </CardHeader>
+        </Card>
+
+        {/* Mobile-only: Recent Chat Sessions */}
+        <Card className="md:hidden">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              Recent Chat Sessions
+            </CardTitle>
+            <CardDescription>
+              Quick access to your latest conversations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loadingSessions ? (
+              <p className="text-sm text-muted-foreground">Loading sessions...</p>
+            ) : sessions.length > 0 ? (
+              <ScrollArea className="h-72 overflow-y-auto">
+                <div className="space-y-3">
+                  {sessions.slice(0, 10).map((session) => (
+                    <Link key={session.id} href={`/chat?session=${session.id}`} className="flex flex-col rounded-md border p-3">
+                      <span className="text-sm font-medium truncate">{session.title}</span>
+                      <span className="text-xs text-muted-foreground">Updated {formatDate(session.updated_at)}</span>
+                    </Link>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <p className="text-sm text-muted-foreground">No recent sessions available.</p>
+            )}
+          </CardContent>
         </Card>
 
         <Tabs defaultValue="overview" className="w-full">

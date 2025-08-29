@@ -551,5 +551,5 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
     {/* </div> */}
     </div>
     </div>
-  )
+  );
 }
