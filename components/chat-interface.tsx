@@ -319,12 +319,15 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex min-w-full h-full">
-      <div className="flex-1">
-      <div className="flex flex-col h-full ">
+    
+    <div className="flex flex-col min-w-full w-full h-full overflow-hidden">
+    {/* <div className="flex min-w-full h-full"> */}
+      
+      {/* <div className="flex-1"> */}
+      {/* <div className="flex flex-col h-screen hide-scrollbar"> */}
       {/* Messages */}
-      <ScrollArea className="flex-1 min-w-full p-4 overflow-y-scroll mt-20 " ref={scrollAreaRef}>
-        <div className="space-y-4  overflow-y-hidden">
+      <ScrollArea className={`flex-1 min-w-full w-full h-[calc(100vh-200px)] p-4 mt-10 md:mt-0  ${messages.length === 0 ? 'mt-20 md:mt-0' : ''}`} ref={scrollAreaRef}>
+        {/* <div className="space-y-4  overflow-y-hidden"> */}
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground">
               <Bot className="h-12 w-12 mx-auto mb-4 text-primary" />
@@ -335,7 +338,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex gap-3 my-1 ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {message.role === "assistant" && (
                   <Avatar className="h-8 w-8">
@@ -431,11 +434,11 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
               </Card>
             </div>
           )}
-        </div>
+        {/* </div> */}
       </ScrollArea>
 
       {/* Input */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border ">
         {/* Attachments Preview */}
         {attachments.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-2">
@@ -474,11 +477,11 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
           </div>
         )}
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           {/* File attachment button */}
           <Dialog open={showAttachmentDialog} onOpenChange={setShowAttachmentDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="icon" className="shrink-0 bg-transparent">
+              <Button variant="outline" size="icon" className="shrink-0 bg-transparent mt-auto">
                 <Paperclip className="h-4 w-4" />
               </Button>
             </DialogTrigger>
@@ -513,7 +516,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
           <Button
             variant="outline"
             size="icon"
-            className="shrink-0 bg-transparent"
+            className="shrink-0 bg-transparent mt-auto"
             onClick={isRecording ? stopRecording : startRecording}
             disabled={loading}
           >
@@ -531,7 +534,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
             onKeyDown={handleKeyPress}
             placeholder="ask something..."
             disabled={loading || isRecording}
-            className="flex-1 min-h-[40px] max-h-32 resize-none truncate"
+            className="flex-1 min-h-[40px] max-h-32 w-0 min-w-0 resize-none border-primary overflow-hidden"
             rows={1}
           />
           
@@ -539,13 +542,13 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
           <Button 
             onClick={() => handleSendMessage()} 
             disabled={(!input.trim() && attachments.length === 0) || loading || isRecording} 
-            className="shrink-0"
+            className="shrink-0 mt-auto"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </div>
-      </div>
-    </div>
+      {/* </div> */}
+    {/* </div> */}
     </div>
     </div>
   )

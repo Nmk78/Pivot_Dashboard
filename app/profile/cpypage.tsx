@@ -11,10 +11,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useAuth } from "@/hooks/use-auth"
-import { getUserSessions, updateCurrentUser } from "@/lib/api-client-new"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/hooks/use-auth"
+import { getUserSessions, updateCurrentUser } from "@/lib/api-client-new"
 import { 
   User, 
   LogOut,
@@ -33,10 +33,9 @@ import {
   BarChart3,
   Activity,
   Clock,
-  Check,
-  Edit2
+  Edit2,
+  Check
 } from "lucide-react"
-import Link from "next/link"
 
 interface UserStats {
   totalSessions: number
@@ -57,16 +56,15 @@ export default function ProfilePage() {
   const [editingSession, setEditingSession] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState<string>("");
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-
+  
   interface ChatSession {
-    id: string;
-    title: string;
-    description: string;
-    created_at: string;
-    updated_at: string;
-  }
-
-  const loadUserSessions = async () => {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+    const loadUserSessions = async () => {
     if (!user) return;
 
     setLoadingSessions(true);
@@ -81,7 +79,6 @@ export default function ProfilePage() {
       setLoadingSessions(false);
     }
   };
-
   const [editForm, setEditForm] = useState({
     full_name: "",
     email: "",
@@ -170,38 +167,6 @@ export default function ProfilePage() {
     return formatDate(dateString)
   }
 
-  const formatSessionDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  const startEditingSession = (session: ChatSession) => {
-    setEditingSession(session.id)
-    setEditTitle(session.title)
-  }
-
-  const saveSessionTitle = () => {
-    // TODO: Implement session title update API call
-    console.log('Saving session title:', editTitle)
-    setEditingSession(null)
-    setEditTitle("")
-  }
-
-  const cancelEditing = () => {
-    setEditingSession(null)
-    setEditTitle("")
-  }
-
-  const handleSessionClick = (sessionId: string) => {
-    setCurrentSessionId(sessionId)
-    // TODO: Navigate to chat session or load session data
-    console.log('Session clicked:', sessionId)
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -230,7 +195,6 @@ export default function ProfilePage() {
   }
 
   const isAdmin = user.role === "admin"
-  console.log("🚀 ~ ProfilePage ~ sessions:", sessions)
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
@@ -468,93 +432,7 @@ export default function ProfilePage() {
               </CardDescription>
               </CardHeader>
               <CardContent>
-              {user && sessions.length > 0 ? (
-                <>
-                <Separator className="my-4 bg-sidebar-border" />
-                <div className="space-y-1 w-auto overflow-hidden">
-                  <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2">
-                  Recent Sessions
-                  </h3>
-                  
-                  <ScrollArea className="flex-1 overflow-y-scroll max-h-96 ">
-                  {sessions.map((session) => (
-                    <Link href={`/chat?session=${session.id}`} key={session.id} className="group">
-                    {editingSession === session.id ? (
-                      <div className="flex items-center gap-1 p-2">
-                      <Input
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                        className="h-6 text-xs"
-                        onKeyPress={(e) => {
-                        if (e.key === "Enter") saveSessionTitle();
-                        if (e.key === "Escape") cancelEditing();
-                        }}
-                        autoFocus
-                      />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={saveSessionTitle}
-                        className="h-6 w-6 p-0"
-                      >
-                        <Check className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-6 w-6 p-0"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                      </div>
-                    ) : (
-                      <Button
-                      variant={
-                        currentSessionId === session.id
-                        ? "secondary"
-                        : "ghost"
-                      }
-                      className={cn(
-                        "w-full justify-start text-left h-auto p-2 group-hover:bg-sidebar-accent",
-                        currentSessionId === session.id &&
-                        "bg-sidebar-accent text-sidebar-accent-foreground"
-                      )}
-                      onClick={() => handleSessionClick(session.id)}
-                      >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium truncate">
-                          {session.title}
-                        </p>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                          e.stopPropagation();
-                          startEditingSession(session);
-                          }}
-                          className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100"
-                        >
-                          <Edit2 className="h-3 w-3" />
-                        </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground truncate">
-                        {formatSessionDate(session.updated_at)}
-                        </p>
-                      </div>
-                      </Button>
-                    )}
-                    </Link>
-                  ))}
-                  </ScrollArea>
-                </div>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                No recent sessions available.
-                </p>
-              )}
+              
               </CardContent>
             </Card>
           </TabsContent>

@@ -10,7 +10,9 @@ export default function ChatLayout({
   return (
     <div className="flex flex-auto h-screen bg-background">
       <UserSidebar />
-      <main className="flex-1 overflow-hidden container ">{children}</main>
+      {/* <main className="flex-1 overflow-hidden container ">{children}</main> */}
+      <main className="flex-1 overflow-hidden">{children}</main>
+      {/* <main className="flex-1 overflow-hidden ">{children}</main> */}
     </div>
   );
 }

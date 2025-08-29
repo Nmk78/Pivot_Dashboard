@@ -171,19 +171,26 @@ function UserSidebarInner() {
   };
 
   const formatSessionDate = (dateString: string) => {
+    // Parse the date string and convert UTC to Myanmar Time (MMT)
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    
+    // Convert to Myanmar timezone (UTC+6:30)
+    const mmtOffset = 6.5 * 60; // 6.5 hours in minutes
+    const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+    const mmtTime = new Date(utcTime + (mmtOffset * 60000));
+    
+    const diffInHours = (now.getTime() - mmtTime.getTime()) / (1000 * 60 * 60);
 
     if (diffInHours < 24) {
-      return date.toLocaleTimeString([], {
+      return mmtTime.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       });
     } else if (diffInHours < 24 * 7) {
-      return date.toLocaleDateString([], { weekday: "short" });
+      return mmtTime.toLocaleDateString([], { weekday: "short" });
     } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      return mmtTime.toLocaleDateString([], { month: "short", day: "numeric" });
     }
   };
 
@@ -277,11 +284,12 @@ function UserSidebarInner() {
                 <h3 className="text-xs font-semibold text-muted-foreground px-2 mb-2">
                   Recent Sessions
                 </h3>
-                <ScrollArea className="flex-1 overflow-y-auto max-h-96 scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-thumb-sidebar-accent scrollbar-track-sidebar-border">
+                <ScrollArea className="flex-1 space-y-2 h-96 max-h-96">
+                {/* <ScrollArea className="flex-1 space-y-2 overflow-y-auto max-h-96 scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-thumb-sidebar-accent scrollbar-track-sidebar-border"> */}
                 {/* <div className="flex-1 overflow-y-auto max-h-96 "> */}
 
                   {sessions.map((session) => (
-                  <div key={session.id} className="group">
+                  <div key={session.id} className="group my-1">
                     {editingSession === session.id ? (
                       <div className="flex items-center gap-1 p-2">
                         <Input

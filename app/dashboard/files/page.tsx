@@ -233,7 +233,7 @@ export default function FilesPage() {
       </div>
 
       {/* Files List */}
-      <ScrollArea className="flex-1 p-6 sm:overflow-visible overflow-y-auto">
+      <ScrollArea className="flex-1 p-6 h-[calc(100vh-200px)] sm:overflow-visible overflow-y-auto">
       {filteredFiles.length === 0 ? (
         <div className="text-center py-12">
         <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />

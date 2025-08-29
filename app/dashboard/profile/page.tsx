@@ -162,6 +162,7 @@ export default function ProfilePage() {
 
   const isAdmin = user.role === "admin";
 
+  console.log("🚀 ~ ProfilePage ~ sessions:", sessions)
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="space-y-6">
