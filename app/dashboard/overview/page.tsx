@@ -326,10 +326,10 @@ export default function OverviewPage() {
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Files
                 </Button>
-                <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/dashboard/analytics')}>
+                {/* <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/dashboard/analytics')}>
                   <BarChart3 className="mr-2 h-4 w-4" />
                   View Reports
-                </Button>
+                </Button> */}
               </div>
             </CardContent>
           </Card>
