@@ -185,7 +185,7 @@ export default function OverviewPage() {
         {/* Main Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Chat Interface */}
-          <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/dashboard')}>
+          <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/dashboard/chat')}>
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <MessageSquare className="h-6 w-6 text-primary" />

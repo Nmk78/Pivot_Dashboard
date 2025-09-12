@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { AutosizeTextarea } from "@/components/ui/autosize-textarea"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -548,14 +548,15 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
           </Button>
           
           {/* Text input */}
-          <Textarea
+          <AutosizeTextarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="ask something..."
             disabled={loading || isRecording}
-            className="flex-1 min-h-[40px] max-h-32 w-0 min-w-0 resize-none border-primary overflow-hidden"
-            rows={1}
+            className="flex-1 min-h-[32px] w-0 min-w-0 resize-none border-primary"
+            minHeight={32}
+            maxHeight={150}
           />
           
           {/* Send button */}

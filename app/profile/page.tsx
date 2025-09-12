@@ -385,7 +385,7 @@ export default function ProfilePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex space-x-2">
+                  {/* <div className="flex space-x-2">
                     <Label htmlFor="full_name">Full Name</Label>
                     {isEditing ? (
                       <Input
@@ -403,7 +403,7 @@ export default function ProfilePage() {
                         : {user.full_name || "Not provided"}
                       </p>
                     )}
-                  </div>
+                  </div> */}
 
                   <div className="flex space-x-2">
                     <Label htmlFor="username">Username</Label>
@@ -427,7 +427,7 @@ export default function ProfilePage() {
 
                   <div className="flex space-x-2">
                     <Label htmlFor="email">Email</Label>
-                    {isEditing ? (
+                    {/* {isEditing ? (
                       <Input
                         id="email"
                         type="email"
@@ -439,11 +439,11 @@ export default function ProfilePage() {
                           }))
                         }
                       />
-                    ) : (
+                    ) : ( */}
                       <p className="text-sm text-muted-foreground">
                         : {user.email}
                       </p>
-                    )}
+                    {/* )} */}
                   </div>
 
                   <div className="flex space-x-2">
@@ -501,14 +501,14 @@ export default function ProfilePage() {
                           {formatDate(userStats.joinDate)}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between">
+                      {/* <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">
                           Last Active
                         </span>
                         <span className="text-sm">
                           {formatLastActive(userStats.lastActive)}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
