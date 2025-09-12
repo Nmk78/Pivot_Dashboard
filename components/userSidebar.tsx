@@ -298,8 +298,8 @@ function UserSidebarInner() {
                           onClick={cancelEditing}
                           className="h-6 w-6 p-0"
                         >
-                          <XIcon className="h-3 w-3 p-2" />
-                        </Button>
+                          <X className="h-3 w-3" />
+                          </Button>
                       </div>
                     ) : (
                       <Button

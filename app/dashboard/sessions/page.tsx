@@ -35,6 +35,7 @@ export default function SessionsPage() {
     try {
       const response = await getUserSessions(50, 0)
       if (response.data) {
+        //@ts-ignore
         setSessions(response.data)
       }
     } catch (error) {
@@ -95,9 +96,7 @@ export default function SessionsPage() {
 
   const filteredSessions = sessions.filter(
     (session) =>
-      session.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      session.description.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      session?.title?.toLowerCase().includes(searchQuery.toLowerCase())  )
 
   if (loading) {
     return (

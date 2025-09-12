@@ -45,7 +45,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
   const [showAttachmentDialog, setShowAttachmentDialog] = useState(false)
   const [playingAudio, setPlayingAudio] = useState<string | null>(null)
   
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -76,12 +76,21 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
     }
   }, [sessionId])
 
+  const scrollToBottom = () => {
+    if (viewportRef.current) {
+      setTimeout(() => {
+        if (viewportRef.current) {
+          viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+        }
+      }, 0);
+    }
+  };
+
   // Auto-scroll to bottom
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
-    }
-  }, [messages])
+    console.log("Scrolling to bottom")
+    scrollToBottom();
+  }, [messages]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -328,7 +337,7 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
       {/* <div className="flex-1"> */}
       {/* <div className="flex flex-col h-screen hide-scrollbar"> */}
       {/* Messages */}
-      <ScrollArea className={`flex-1 min-w-full w-full h-[calc(100vh-200px)] p-4 mt-10 md:mt-0  ${messages.length === 0 ? 'mt-20 md:mt-0' : ''}`} ref={scrollAreaRef}>
+      <ScrollArea className={`flex-1 min-w-full w-full h-[calc(100vh-200px)] p-4 mt-10 md:mt-0  ${messages.length === 0 ? 'mt-20 md:mt-0' : ''}`} viewportRef={viewportRef}>
         {/* <div className="space-y-4  overflow-y-hidden"> */}
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground">
@@ -400,15 +409,16 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
                   )}
                   {/* Text content */}
                   {message.content && !message.content.startsWith('[') && (
-                    <ReactMarkdown
-                      // className="prose prose-sm dark:prose-invert max-w-none"
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
                   )}
                                     
                   <p
