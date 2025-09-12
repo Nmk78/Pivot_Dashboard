@@ -10,6 +10,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Loader2, Send, User, Bot, Paperclip, Mic, MicOff, Play, Pause, FileText, Image, Video, Music, X } from "lucide-react"
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { sendChatMessage, getChatHistory, speech, textWithFile } from "@/lib/api"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -398,7 +400,15 @@ export function ChatInterface({ sessionId }: ChatInterfaceProps) {
                   )}
                   {/* Text content */}
                   {message.content && !message.content.startsWith('[') && (
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <ReactMarkdown
+                      // className="prose prose-sm dark:prose-invert max-w-none"
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
                   )}
                                     
                   <p

@@ -1054,7 +1054,7 @@ export default function ProfilePage() {
                           }}
                           className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100"
                         >
-                          <Edit2 className="h-3 w-3" />
+                          <Edit2 className="h-3 w-3 p-2" />
                         </Button>
                         </div>
                         <p className="text-xs text-muted-foreground truncate">

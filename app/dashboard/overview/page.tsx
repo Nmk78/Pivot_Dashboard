@@ -92,6 +92,7 @@ export default function OverviewPage() {
         description: "New conversation",
       })
       if (response.data) {
+        //@ts-ignore
         router.push(`/dashboard?session=${response.data.id}`)
       }
     } catch (error) {
@@ -175,7 +176,7 @@ export default function OverviewPage() {
             <CardContent>
               <div className="text-2xl font-bold">{stats?.avgResponseTime || 0}ms</div>
               <p className="text-xs text-muted-foreground">
-                <Badge variant="secondary" className="text-xs">{stats?.avgResponseTime > 1500 ? "Slow" : "Fast"}</Badge>
+                <Badge variant="secondary" className="text-xs">{stats?.avgResponseTime && stats?.avgResponseTime > 1500 ? "Slow" : "Fast"}</Badge>
               </p>
             </CardContent>
           </Card>

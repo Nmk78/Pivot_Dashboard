@@ -7,15 +7,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import {
   getUserSessions,
@@ -23,25 +16,14 @@ import {
   updateChatSession,
 } from "@/lib/api-client-new";
 import {
-  MessageSquare,
-  FileText,
-  Users,
-  BarChart3,
-  Settings,
-  LogOut,
   Menu,
-  X,
-  Mic,
-  Search,
-  Plus,
-  Home,
-  User,
+  X, Plus, User,
   Edit2,
   CircleUser,
   Check,
   X as XIcon,
   LogIn,
-  LayoutDashboard,
+  LayoutDashboard
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -316,7 +298,7 @@ function UserSidebarInner() {
                           onClick={cancelEditing}
                           className="h-6 w-6 p-0"
                         >
-                          <XIcon className="h-3 w-3" />
+                          <XIcon className="h-3 w-3 p-2" />
                         </Button>
                       </div>
                     ) : (
